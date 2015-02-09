@@ -18,7 +18,7 @@ class Environment
     return self if @@readOnlyTags
     readonly_tags_file = "#{File.dirname(__FILE__)}/../../conf/readOnlyTags.yaml"
     @@readOnlyTags = YAML::load(File.open(readonly_tags_file))
-    @@history      = History.new
+    @@history      = History.instance
     srand(1)
   end
 
@@ -26,8 +26,8 @@ class Environment
     send(aTag)
   end
 
-  def set(aTag,aValue)
-    @@history.updateTopic(aValue) if(aTag == 'topic')
+  def set aTag, aValue
+    @@history.updateTopic(aValue) if aTag == 'topic'
     @@readOnlyTags[aTag] = aValue
   end
 

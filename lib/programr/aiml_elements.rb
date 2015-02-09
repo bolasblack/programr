@@ -25,16 +25,17 @@ class Category
     @that.push anObj
   end
 
-  def get_pattern
-    res = ''
-    @pattern.each { |tocken| res += tocken.to_s }
-    res.split(/\s+/)
+  def patterns
+    @pattern.map(&:to_s).join('').split(/\s+/)
   end
 
-  def get_that
-    res = ''
-    @that.each { |tocken| res += tocken.to_s }
-    return res.split(/\s+/)
+  def thats
+    @that.map(&:to_s).join('').split(/\s+/)
+  end
+
+  def topics
+    return [] if @topic.nil?
+    @topic.split(/\s+/)
   end
 end
 
@@ -141,7 +142,7 @@ class SetTag
   @@environment = Environment.new
 
   def initialize aLocalname, attributes
-    if attributes.empty?
+    if attributes['name'].nil?
       @localname = aLocalname.sub(/^set_/, '')
     else
       @localname = attributes['name']
@@ -153,15 +154,17 @@ class SetTag
     @value.push(aBody)
   end
 
+  def value
+    @value.map(&:to_s).join('').strip
+  end
+
   def execute
-    res = ''
-    @value.each { |tocken| res += tocken.to_s }
-    @@environment.set(@localname, res.strip)
+    @@environment.set(@localname, value)
   end
   alias_method :to_s, :execute
 
   def inspect
-    "set tag #{@localname} -> #{execute}"
+    "set tag #{@localname} -> #{value}"
   end
 end
 

@@ -1,5 +1,5 @@
 require 'test/unit'
-require_relative '../lib/programr/environment'
+require 'programr/environment'
 
 class TestEnvironment < Test::Unit::TestCase
   def setup

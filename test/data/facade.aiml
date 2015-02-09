@@ -14,7 +14,9 @@
 
   <category>
     <pattern>yes *</pattern>
-    <template><srai>yes</srai> <sr/></template>
+    <template>
+      <srai>yes</srai> <sr/>
+    </template>
   </category>
 
   <category>
@@ -159,7 +161,10 @@
 
   <category>
     <pattern>srai test</pattern>
-    <template><srai>atomic test</srai><think><set_topic>WORK</set_topic></think></template>
+    <template>
+      <srai>atomic test</srai>
+      <think><set_topic>WORK</set_topic></think>
+    </template>
   </category>
 
   <category>

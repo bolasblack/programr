@@ -1,5 +1,9 @@
+require 'singleton'
+
 module ProgramR
   class History
+    include Singleton
+
     @@topic       = 'default'
     @@inputs      = []
     @@responses   = []
