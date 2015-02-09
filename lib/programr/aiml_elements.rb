@@ -76,11 +76,7 @@ class Random
   end
 
   def execute
-    res = ''
-    @@environment.getRandom(@conditions).each do |tocken|
-      res += tocken.to_s
-    end
-    res.strip
+    @conditions.sample.map(&:to_s).join('').strip
   end
   alias_method :to_s, :execute
 
@@ -109,18 +105,14 @@ class Condition
   def setListElement someAttributes
     @property = someAttributes['name'] if someAttributes.has_key?('name')
     @currentCondition = '_default'
-    if(someAttributes.key?('value'))
+    if someAttributes.has_key?('value')
       @currentCondition = someAttributes['value'].sub('*', '.*')
     end
   end
 
   def execute
-    return '' unless(@@environment.get(@property) =~ /^#{@currentCondition}$/)
-    res = ''
-    @conditions[@currentCondition].each{|tocken|
-      res += tocken.to_s
-    }
-    return res.strip
+    return '' unless @@environment.get(@property) =~ /^#{@currentCondition}$/
+    @conditions[@currentCondition].map(&:to_s).join('').strip
   end
   alias_method :to_s, :execute
 
@@ -137,13 +129,8 @@ class ListCondition < Condition
 
   def execute
     @conditions.keys.each do |key|
-      if(@@environment.get(@property) == key)
-        res = ''
-        @conditions[key].each{|tocken|
-        res += tocken.to_s
-      }
-      return res.strip
-      end
+      next if @@environment.get(@property) != key
+      return @conditions[key].map(&:to_s).join('').strip
     end
     return ''
   end

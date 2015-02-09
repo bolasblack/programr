@@ -70,10 +70,6 @@ class Environment
     @@readOnlyTags['question'][rand(@@readOnlyTags['question'].length-1)]
   end
 
-  def getRandom(anArrayofChoices)
-    anArrayofChoices[rand(anArrayofChoices.length-1)]
-  end
-
   def getStimula(anIndex)
     @@history.getStimula(anIndex)
   end
