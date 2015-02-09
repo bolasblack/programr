@@ -1,3 +1,5 @@
+require_relative 'helper'
+
 require 'test/unit'
 require 'programr/environment'
 

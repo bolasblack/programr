@@ -1,6 +1,7 @@
+require_relative 'helper'
+
 require 'test/unit'
 require 'date'
-
 require 'programr/facade'
 require 'programr/aiml_elements'
 
