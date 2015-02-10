@@ -5,16 +5,18 @@ require 'programr/utils'
 
 module ProgramR
   class Facade
-    attr_reader :history
-
     def initialize(cache = nil)
       @graph_master = GraphMaster.new
       @parser       = AimlParser.new(@graph_master)
       @history      = History.instance
     end
 
-    def learn(files)
-      AimlFinder::find(files).each{ |file| File.open(file, 'r'){ |f| @parser.parse f } }
+    def learn content
+      if content.is_a? Array
+        read_aiml(content) { |f| @parser.parse f }
+      else
+        @parser.parse content
+      end
     end
 
     def loading(theCacheFilename='cache')
@@ -60,5 +62,17 @@ module ProgramR
     end
 
     #  def getBotName()end
+
+    private
+
+    def read_aiml files_and_dirs, &block
+      files_and_dirs.map do |file|
+        if File.file?(file) && File.fnmatch?('*.aiml', file)
+          File.open(file, 'r') { |content| block.call content }
+        else
+          read_aiml Dir["#{file}/*"], &block
+        end
+      end
+    end
   end
 end

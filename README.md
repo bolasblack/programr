@@ -47,17 +47,19 @@ Bundler.setup :default
 
 require 'programr'
 
-if ARGV.empty?
-  puts 'Please pass a list of AIMLs and/or directories as parameters'
-  puts 'Usage: ruby programr_test.rb {aimlfile|dir}[{aimlfile|dir}]...'
-  exit
-end
-
 # You can custom readonly tags
 ProgramR::Environment.readonly_tags_file = 'test/data/readOnlyTags.yaml'
 
 robot = ProgramR::Facade.new
-robot.learn(ARGV)
+
+# pass in a folder array or plain aiml content
+robot.learn ['test/data']
+robot.learn <<-AIML
+  <category>
+    <pattern>#{pattern}</pattern>
+    <template>#{result}</template>
+  </category>
+AIML
 
 while true
   print '>> '
