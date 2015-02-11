@@ -34,7 +34,7 @@ describe ProgramR::Facade do
 
     shared_examples 'alice' do |opt = {}|
       if opt[:in_test]
-        message = "support tag #{opt[:in_test]}"
+        message = "support #{opt[:in_test]}"
       else
         message = "can handle message #{opt[:with_stimula]}"
       end

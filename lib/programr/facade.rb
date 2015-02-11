@@ -51,6 +51,14 @@ module ProgramR
         end
         value = token.to_s
         thinkIsActive ? '' : value
+      end.reduce([]) do |memo, part|
+        # clean case [" ", "part 1 ", " ", "part 2", " "]
+        if !memo.last || !memo.last.end_with?(' ')
+          memo << part
+        elsif part && memo.last.end_with?(' ') && !part.strip.empty?
+          memo << part
+        end
+        memo
       end.join('').strip
       #TODO verify if case insensitive. Cross check with main program & parser
       @history.updateResponse(res.upcase) if firstStimula
