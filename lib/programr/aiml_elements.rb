@@ -56,7 +56,7 @@ class Template
 
   def inspect
     res = ''
-    @value.each{ |tocken| res += tocken.inspect }
+    @value.each{ |token| res += token.inspect }
     res
   end
 end
@@ -298,7 +298,7 @@ class Person2
 
   def execute
     res = ''
-    @sentence.each { |tocken| res += tocken.to_s }
+    @sentence.each { |token| res += token.to_s }
     gender = @@environment.get('gender')
     res.gsub(/\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i) do
       if $3
@@ -344,7 +344,7 @@ class Person
 
   def execute
     res = ''
-    @sentence.each { |tocken| res += tocken.to_s }
+    @sentence.each { |token| res += token.to_s }
     gender = @@environment.get('gender')
     res.gsub(/\b(she|he|i|me|my|myself|mine)\b/i) do
       @@swap[gender][$1.downcase]
@@ -368,7 +368,7 @@ class Gender
 
   def execute
     res = ''
-    @sentence.each { |tocken| res += tocken.to_s }
+    @sentence.each { |token| res += token.to_s }
     res.gsub(/\b(she|he|him|his|(for|with|on|in|to) her|her)\b/i) do
       pronoun = $1.downcase
       if pronoun == 'she'

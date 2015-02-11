@@ -8,7 +8,7 @@
   <topic name="WORK">
     <category>
       <pattern>atomic test</pattern>
-      <template>new test succeded</template>
+      <template>new test succeeded</template>
     </category>
   </topic>
 
@@ -27,7 +27,7 @@
   <topic name="* GAME">
     <category>
       <pattern>atomic test</pattern>
-      <template>topic star test succeded <topicstar/></template>
+      <template>topic star test succeeded <topicstar/></template>
     </category>
   </topic>
 
@@ -156,7 +156,7 @@
 
   <category>
     <pattern>atomic test</pattern>
-    <template>test succeded</template>
+    <template>test succeeded</template>
   </category>
 
   <category>
@@ -169,14 +169,17 @@
 
   <category>
     <pattern>that test</pattern>
-    <that>NEW TEST SUCCEDED</that>
+    <that>NEW TEST SUCCEEDED</that>
     <template>that test 1</template>
   </category>
 
   <category>
     <pattern>that test</pattern>
     <that>THAT TEST 1</that>
-    <template>that test 2<think><set_topic>OK GAME</set_topic></think></template>
+    <template>
+      that test 2
+      <think><set_topic>OK GAME</set_topic></think>
+    </template>
   </category>
 
   <category>

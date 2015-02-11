@@ -3,7 +3,6 @@ require_relative 'helper'
 require 'test/unit'
 require 'date'
 require 'programr/facade'
-require 'programr/aiml_elements'
 
 class TestReaction < Test::Unit::TestCase
   def setup
@@ -12,12 +11,13 @@ class TestReaction < Test::Unit::TestCase
   end
 
   def test_stimula_reaction
-    assert_equal('test succeded', @robot.get_reaction('atomic test'), 'ATOMIC')
-    assert_equal('test succeded', @robot.get_reaction('srai test'), "SRAI")
-    assert_equal('new test succeded',@robot.get_reaction('atomic test'), "TOPIC")
+    assert_equal('test succeeded', @robot.get_reaction('atomic test'), 'ATOMIC')
+    assert_equal('test succeeded', @robot.get_reaction('srai test'), "SRAI")
+    assert_equal('new test succeeded',@robot.get_reaction('atomic test'), "TOPIC")
+    puts 'test start'
     assert_equal('that test 1', @robot.get_reaction('that test'), 'THAT 1')
     assert_equal('that test 2', @robot.get_reaction('that test'), "THAT 2")
-    assert_equal('topic star test succeded OK',
+    assert_equal('topic star test succeeded OK',
                   @robot.get_reaction('atomic test'), "STAR TOPIC")
     assert_equal('the UPPERCASE test', @robot.get_reaction('uppercase test'))
     assert_equal('the lowercase test', @robot.get_reaction('LOWERCASE TEST'))

@@ -25,6 +25,6 @@ class TestFacade < Test::Unit::TestCase
 
   def test_learn_folder
     @robot.learn ['test']
-    assert_equal 'test succeded', @robot.get_reaction('atomic test')
+    assert_equal 'test succeeded', @robot.get_reaction('atomic test')
   end
 end

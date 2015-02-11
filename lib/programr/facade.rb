@@ -40,16 +40,16 @@ module ProgramR
       thinkIsActive = false
       reaction = @graph_master.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
       @history.updateStarMatches starGreedy
-      res = reaction.map do |tocken|
-        if tocken.is_a? Srai
-          tocken = get_reaction tocken.pattern, false
+      res = reaction.map do |token|
+        if token.is_a? Srai
+          token = get_reaction token.pattern, false
           @history.updateStarMatches starGreedy
         end
-        if tocken.is_a? Think
+        if token.is_a? Think
           thinkIsActive = !thinkIsActive
           next
         end
-        value = tocken.to_s
+        value = token.to_s
         thinkIsActive ? '' : value
       end.join('').strip
       #TODO verify if case insensitive. Cross check with main program & parser
