@@ -53,7 +53,7 @@ ProgramR::Environment.readonly_tags_file = 'test/data/readOnlyTags.yaml'
 robot = ProgramR::Facade.new
 
 # pass in a folder array or plain aiml content
-robot.learn ['test/data']
+robot.learn ['spec/data']
 robot.learn <<-AIML
   <category>
     <pattern>#{pattern}</pattern>
