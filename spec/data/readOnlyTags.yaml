@@ -35,3 +35,4 @@
     'location': 'canada'
     'age': '40'
     'has': 'nothing'
+    null_value_attribute:

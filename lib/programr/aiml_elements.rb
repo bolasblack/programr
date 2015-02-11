@@ -72,7 +72,7 @@ class Random
     @conditions.push([])
   end
 
-  def add aBody
+  def add aBody, someAttributes = {}
     @conditions[-1].push(aBody)
   end
 
@@ -87,13 +87,12 @@ class Random
 end
 
 class Condition
-  #se c'e' * nel value?
   @@environment = Environment.new
 
   def initialize someAttributes
     @conditions = {}
     @property = someAttributes['name']
-    @currentCondition = someAttributes['value'].sub('*', '.*')
+    @currentCondition = parse_value someAttributes['value']
   end
 
   def add aBody
@@ -104,10 +103,9 @@ class Condition
   end
 
   def setListElement someAttributes
-    @property = someAttributes['name'] if someAttributes.has_key?('name')
-    @currentCondition = '_default'
-    if someAttributes.has_key?('value')
-      @currentCondition = someAttributes['value'].sub('*', '.*')
+    pick_condition someAttributes do |name, value|
+      @property = name
+      @currentCondition = value
     end
   end
 
@@ -120,22 +118,71 @@ class Condition
   def inspect
     "condition -> #{execute}"
   end
+
+  private
+
+  def pick_condition attributes
+    name = string_not_empty(attributes['name']) ? attributes['name'] : @property
+    value = string_not_empty(attributes['value']) ? attributes['value'] : '_default'
+    yield name, parse_value(value)
+  end
+
+  def string_not_empty string
+    !(string.nil? or string.empty?)
+  end
+
+  def parse_value value
+    value.sub '*', '.*'
+  end
 end
 
 class ListCondition < Condition
   def initialize someAttributes
-    @conditions = {}
+    @conditions = []
     @property = someAttributes['name'] if someAttributes.has_key? 'name'
   end
 
-  def execute
-    @conditions.keys.each do |key|
-      next if @@environment.get(@property) != key
-      return @conditions[key].map(&:to_s).join('').strip
+  def add text, someAttributes
+    pick_condition someAttributes do |name, value|
+      find_condition(name, value)[:text].push text
     end
-    return ''
+  end
+
+  def setListElement someAttributes
+    pick_condition someAttributes do |name, value|
+      @conditions.push name: name, value: value, text: []
+    end
+  end
+
+  def execute
+    fallback_item = @conditions.select do |condition|
+      # select the fallback item
+      if condition[:name].nil? && condition[:value] == '_default'
+        true
+      elsif @@environment.get(condition[:name]).nil? && condition[:value] == '_default'
+        return get_text condition
+      elsif @@environment.get(condition[:name]) =~ /^#{condition[:value]}$/
+        return get_text condition
+      else
+        false
+      end
+    end.first
+    fallback_item ? get_text(fallback_item) : ''
   end
   alias_method :to_s, :execute
+
+  private
+
+  def get_text condition
+    return '' if condition[:text].nil?
+    condition[:text].map(&:to_s).join('').strip
+  end
+
+  def find_condition name, value
+    @conditions.select do |condition|
+      condition[:name] == name && condition[:value] == value
+    end.first
+  end
 end
 
 class SetTag

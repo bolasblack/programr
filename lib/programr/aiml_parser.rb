@@ -11,17 +11,18 @@ class AimlParser
 
   def parse(aiml)
     @parser = REXML::Parsers::SAX2Parser.new(aiml)
-    category         = nil
-    openLabels       = []
-    patternIsOpen    = false
-    thatIsOpen       = false
-    currentSetLabel  = nil
-    currentCondition = nil
-    currentSrai      = nil
-    currentGender    = nil
-    currentPerson    = nil
-    currentPerson2   = nil
-    currentTopic     = nil
+    category             = nil
+    openLabels           = []
+    patternIsOpen        = false
+    thatIsOpen           = false
+    currentSetLabel      = nil
+    currentCondition     = nil
+    currentConditionItem = nil
+    currentSrai          = nil
+    currentGender        = nil
+    currentPerson        = nil
+    currentPerson2       = nil
+    currentTopic         = nil
 
     @parser.listen(%w{ category }) do |uri, localname, qname, attributes|
       category = Category.new
@@ -34,7 +35,7 @@ class AimlParser
       openLabels[-1].add(Star.new(localname, attributes))
     end
 
-### condition -- random
+### condition -- condition
     @parser.listen(%w{ condition }) do |uri, localname, qname, attributes|
       if attributes.has_key?('value')
         currentCondition = Condition.new(attributes)
@@ -56,21 +57,29 @@ class AimlParser
       currentCondition.add(text)
     end
 
-    @parser.listen(%w{ li }) do |uri, localname, qname, attributes|
-      next unless currentCondition
-      currentCondition.setListElement(attributes)
-    end
-
-    @parser.listen(:characters, %w{ li }) do |text|
-      next unless currentCondition
-      currentCondition.add(text)
-    end
-
     @parser.listen(:end_element, %w{ condition random }) do
       currentCondition = nil
       openLabels.pop
     end
-### end condition -- random
+
+    @parser.listen(%w{ li }) do |uri, localname, qname, attributes|
+      next unless currentCondition
+      currentCondition.setListElement(attributes)
+      currentConditionItem = attributes
+    end
+
+    @parser.listen(:characters, %w{ li }) do |text|
+      next unless currentCondition
+      next unless currentConditionItem
+      next if text =~ /^\s+$/
+      currentCondition.add text, currentConditionItem
+    end
+
+    @parser.listen(:end_element, %w{ li }) do
+      next unless currentConditionItem
+      currentConditionItem = nil
+    end
+### end condition -- condition
 
     @parser.listen([/^get.*/, /^bot_*/, 'for_fun', /that$/, 'question']) do
                    |uri, localname, qname, attributes|

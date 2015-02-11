@@ -35,7 +35,7 @@ class Environment
     tag = methId.id2name
     return @@history.send(tag) if(tag =~ /that$/)
     return @@readOnlyTags[tag] if(@@readOnlyTags.key?(tag))
-    ''
+    nil
   end
 
   def test

@@ -44,6 +44,20 @@ describe ProgramR::Facade do
       end
     end
 
+    describe 'with paratactic condition' do
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BROWN', in_test: 'normal case'
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM CYAN', in_test: 'item value include start'
+    end
+
+    describe 'with condition list' do
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM RED', in_test: 'normal case'
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLOND', in_test: 'item value include star'
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLACK', in_test: 'switch style'
+      it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula: 'I AM WHITE', in_test: 'not exist attribute'
+      it_behaves_like 'alice', response: 'You sound very mysterious.', with_stimula: 'I AM BLUE', in_test: 'null value'
+      it_behaves_like 'alice', response: 'You sound very nice.', with_stimula: 'I AM GRAY', in_test: 'default item'
+    end
+
     it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'atomic test', in_test: 'ATOMIC'
     it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'srai test',  in_test: 'SRAI'
     it_behaves_like 'alice', response: 'new test succeeded', with_stimula: 'atomic test', in_test: 'TOPIC'
@@ -63,9 +77,6 @@ describe ProgramR::Facade do
     it_behaves_like 'alice', response: 'localhost', with_stimula:'get test 2'
     it_behaves_like 'alice', response: 'ok.', with_stimula:'think test. i am male'
     it_behaves_like 'alice', response: 'male.female.female', with_stimula:'test set'
-    it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula:'I AM BLOND'
-    it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula:'I AM RED'
-    it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula:'I AM BLACK'
     it_behaves_like 'alice', response: 'The sentence test', with_stimula:'sentence test'
     it_behaves_like 'alice', response: 'The Formal Test', with_stimula:'formal test'
     it_behaves_like 'alice', response: 'A', with_stimula:'random test'
