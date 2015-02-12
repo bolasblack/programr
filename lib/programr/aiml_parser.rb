@@ -64,20 +64,21 @@ class AimlParser
 
     @parser.listen(%w{ li }) do |uri, localname, qname, attributes|
       next unless currentCondition
-      currentCondition.setListElement(attributes)
-      currentConditionItem = attributes
+      currentConditionItem = ConditionItem.new attributes, currentCondition
+      currentCondition.setListElement(currentConditionItem)
+      openLabels.push currentConditionItem
     end
 
     @parser.listen(:characters, %w{ li }) do |text|
-      next unless currentCondition
       next unless currentConditionItem
       next if text =~ /^\s+$/
-      currentCondition.add text, currentConditionItem
+      currentConditionItem.add text
     end
 
     @parser.listen(:end_element, %w{ li }) do
       next unless currentConditionItem
       currentConditionItem = nil
+      openLabels.pop
     end
 ### end condition -- condition
 

@@ -1,36 +1,33 @@
 require 'securerandom'
 
 describe ProgramR::Facade do
-  before do
-    @robot = ProgramR::Facade.new
-  end
+  let(:robot) { ProgramR::Facade.new }
+
+  after { robot.reset }
 
   describe '#learn' do
     it "can read plain aiml" do
       pattern = SecureRandom.hex
       result = SecureRandom.hex
 
-      @robot.learn <<-AIML
+      robot.learn <<-AIML
 <category>
   <pattern>#{pattern}</pattern>
   <template>#{result}</template>
 </category>
       AIML
 
-      expect(@robot.get_reaction pattern).to eq result
+      expect(robot.get_reaction pattern).to eq result
     end
 
     it "can read aiml folder" do
-      @robot.learn ['spec']
-      expect(@robot.get_reaction 'atomic test').to eq 'test succeeded'
+      robot.learn ['spec']
+      expect(robot.get_reaction 'atomic test').to eq 'test succeeded'
     end
   end
 
   describe '#get_reaction' do
-    before do
-      @robot = ProgramR::Facade.new
-      @robot.learn ['spec/data/facade.aiml']
-    end
+    before { robot.learn ['spec/data/facade.aiml'] }
 
     shared_examples 'alice' do |opt = {}|
       if opt[:in_test]
@@ -40,13 +37,15 @@ describe ProgramR::Facade do
       end
       it message do
         response = opt[:response].is_a?(Proc) ? opt[:response].call : opt[:response]
-        expect(@robot.get_reaction(opt[:with_stimula])).to eq response
+        expect(robot.get_reaction(opt[:with_stimula])).to eq response
       end
     end
 
     describe 'with paratactic condition' do
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BROWN', in_test: 'normal case'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM CYAN', in_test: 'item value include start'
+      it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula: 'I AM GREEN', in_test: 'not exist attribute'
+      it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula: 'I AM PINK', in_test: 'null value'
     end
 
     describe 'with condition list' do

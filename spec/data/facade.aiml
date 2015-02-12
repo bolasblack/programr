@@ -113,6 +113,24 @@
   </category>
 
   <category>
+    <pattern>I AM GREEN</pattern>
+    <template>
+      You sound very
+      <condition name="not_exist_attribute" value="value">handsome.</condition>
+      <condition name="not_exist_attribute" value="">attractive.</condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM PINK</pattern>
+    <template>
+      You sound very
+      <condition name="null_value_attribute" value="value">handsome.</condition>
+      <condition name="null_value_attribute" value="">attractive.</condition>
+    </template>
+  </category>
+
+  <category>
     <pattern>I AM RED</pattern>
     <template>
       You sound very

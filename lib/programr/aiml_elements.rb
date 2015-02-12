@@ -65,19 +65,19 @@ class Random
   @@environment = Environment.new
 
   def initialize
-    @conditions = []
+    @condition_items = []
   end
 
-  def setListElement someAttributes
-    @conditions.push([])
+  def setListElement condition_item
+    @condition_items << condition_item
   end
 
-  def add aBody, someAttributes = {}
-    @conditions[-1].push(aBody)
+  def add aBody
+    @condition_items[-1].add(aBody)
   end
 
   def execute
-    @conditions.sample.map(&:to_s).join('').strip
+    @condition_items.sample.execute
   end
   alias_method :to_s, :execute
 
@@ -91,8 +91,10 @@ class Condition
 
   def initialize someAttributes
     @conditions = {}
-    @property = someAttributes['name']
-    @currentCondition = parse_value someAttributes['value']
+    pick_condition someAttributes do |name, value|
+      @property = name
+      @currentCondition = value
+    end
   end
 
   def add aBody
@@ -110,13 +112,23 @@ class Condition
   end
 
   def execute
-    return '' unless @@environment.get(@property) =~ /^#{@currentCondition}$/
-    @conditions[@currentCondition].map(&:to_s).join('').strip
+    condition_valid? ? text : ''
   end
   alias_method :to_s, :execute
 
   def inspect
     "condition -> #{execute}"
+  end
+
+  def condition_valid?
+    return false if @property.nil?
+    if @@environment.get(@property).nil? && @currentCondition == '_default'
+      true
+    elsif @@environment.get(@property) =~ /^#{@currentCondition}$/
+      true
+    else
+      false
+    end
   end
 
   private
@@ -134,54 +146,74 @@ class Condition
   def parse_value value
     value.sub '*', '.*'
   end
+
+  def text
+    texts = @conditions[@currentCondition]
+    (texts.nil? || texts.empty?) ? '' : texts.map(&:to_s).join('').strip
+  end
 end
 
 class ListCondition < Condition
+  attr_reader :property
+
   def initialize someAttributes
-    @conditions = []
+    @condition_items = []
     @property = someAttributes['name'] if someAttributes.has_key? 'name'
   end
 
-  def add text, someAttributes
-    pick_condition someAttributes do |name, value|
-      find_condition(name, value)[:text].push text
-    end
+  def add text
+    @condition_items[-1].add text
   end
 
-  def setListElement someAttributes
-    pick_condition someAttributes do |name, value|
-      @conditions.push name: name, value: value, text: []
-    end
+  def setListElement condition_item
+    @condition_items << condition_item
   end
 
   def execute
-    fallback_item = @conditions.select do |condition|
-      # select the fallback item
-      if condition[:name].nil? && condition[:value] == '_default'
-        true
-      elsif @@environment.get(condition[:name]).nil? && condition[:value] == '_default'
-        return get_text condition
-      elsif @@environment.get(condition[:name]) =~ /^#{condition[:value]}$/
-        return get_text condition
-      else
-        false
-      end
-    end.first
-    fallback_item ? get_text(fallback_item) : ''
+    @condition_items.each do |item|
+      return item.execute if item.condition_valid?
+    end
+    default_item_result || ''
   end
   alias_method :to_s, :execute
 
   private
 
-  def get_text condition
-    return '' if condition[:text].nil?
-    condition[:text].map(&:to_s).join('').strip
+  def default_item_result
+    get_default_item = -> do
+      @condition_items.each { |item| return item if item.default_item? }
+    end
+    item = get_default_item.call
+    item.is_a?(Array) ? nil : item.execute
+  end
+end
+
+class ConditionItem < Condition
+  def initialize someAttributes, conditionContainer
+    @conditionContainer = conditionContainer
+    @conditions = {}
+    if @conditionContainer.is_a? ListCondition
+      pick_condition someAttributes do |name, value|
+        @property = name || @conditionContainer.property
+        @currentCondition = value
+      end
+    end
   end
 
-  def find_condition name, value
-    @conditions.select do |condition|
-      condition[:name] == name && condition[:value] == value
-    end.first
+  def default_item?
+    @property.nil? && @currentCondition == '_default'
+  end
+
+  def execute
+    if @conditionContainer.is_a?(Random) or default_item?
+      text
+    else
+      super
+    end
+  end
+
+  def inspect
+    "condition item -> #{execute}"
   end
 end
 
