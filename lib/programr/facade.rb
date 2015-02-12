@@ -11,6 +11,10 @@ module ProgramR
       @history      = History.instance
     end
 
+    def reset
+      @graph_master.reset
+    end
+
     def learn content
       if content.is_a? Array
         read_aiml(content) { |f| @parser.parse f }

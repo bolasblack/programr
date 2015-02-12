@@ -8,7 +8,7 @@ module ProgramR
     attr_reader :graph
 
     def initialize
-      @graph = Node.new
+      reset
     end
 
     def merge aCache
@@ -26,6 +26,10 @@ module ProgramR
       path = "#{stimula} #{THAT} #{last_said} #{TOPIC} #{cur_topic}".split(/\s+/)
       template = @graph.get_template(path, starGreedy)
       template ? template.value : []
+    end
+
+    def reset
+      @graph = Node.new
     end
 
     def to_s
