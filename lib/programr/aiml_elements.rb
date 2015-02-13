@@ -1,8 +1,16 @@
 require 'programr/environment'
+require 'active_support/core_ext/string'
 
 module ProgramR
 
-class Category
+class AimlTag
+  def inspect
+    inspect_str = respond_to?(:to_inspect, true) ? to_inspect : execute
+    "<#{self.class.name.demodulize.tableize.singularize} -> #{inspect_str}>"
+  end
+end
+
+class Category < AimlTag
   attr_accessor :template, :that, :topic
 
   @@cardinality = 0
@@ -39,7 +47,7 @@ class Category
   end
 end
 
-class Template
+class Template < AimlTag
   attr_accessor :value
 
   def initialize
@@ -55,13 +63,11 @@ class Template
   end
 
   def inspect
-    res = ''
-    @value.each{ |token| res += token.inspect }
-    res
+    @value.map(&:inspect)
   end
 end
 
-class Random
+class Random < AimlTag
   @@environment = Environment.new
 
   def initialize
@@ -80,13 +86,9 @@ class Random
     @condition_items.sample.execute
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "random -> #{execute}"
-  end
 end
 
-class Condition
+class Condition < AimlTag
   @@environment = Environment.new
 
   def initialize someAttributes
@@ -115,10 +117,6 @@ class Condition
     condition_valid? ? text : ''
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "condition -> #{execute}"
-  end
 
   def condition_valid?
     return false if @property.nil?
@@ -211,13 +209,9 @@ class ConditionItem < Condition
       super
     end
   end
-
-  def inspect
-    "condition item -> #{execute}"
-  end
 end
 
-class SetTag
+class SetTag < AimlTag
   @@environment = Environment.new
 
   def initialize aLocalname, attributes
@@ -242,12 +236,14 @@ class SetTag
   end
   alias_method :to_s, :execute
 
-  def inspect
-    "set tag #{@localname} -> #{value}"
+  private
+
+  def to_inspect
+    "#{@localname}: #{value}"
   end
 end
 
-class Input
+class Input < AimlTag
   @@environment = Environment.new
 
   def initialize(someAttributes)
@@ -260,12 +256,14 @@ class Input
   end
   alias_method :to_s, :execute
 
-  def inspect
-    "input -> #{@@environment.getStimula(@index)}"
+  private
+
+  def to_inspect
+    @@environment.getStimula(@index)
   end
 end
 
-class Star
+class Star < AimlTag
   @@environment = Environment.new
 
   def initialize aStarName, someAttributes
@@ -279,12 +277,14 @@ class Star
   end
   alias_method :to_s, :execute
 
-  def inspect
-    "#{@star} #{@index} -> #{@@environment.send(@star, @index)}"
+  private
+
+  def to_inspect
+    "#{@star} #{@index} (#{@@environment.send(@star, @index)})"
   end
 end
 
-class ReadOnlyTag
+class ReadOnlyTag < AimlTag
   @@environment = Environment.new
 
   def initialize aLocalname, someAttributes
@@ -302,12 +302,16 @@ class ReadOnlyTag
   end
   alias_method :to_s, :execute
 
-  def inspect
-    "ReadOnlyTag #{@localname} -> #{execute}"
+  private
+
+  def to_inspect
+    "#{@localname}: #{execute}"
   end
 end
 
-class Think
+class Think < AimlTag
+  attr_reader :status
+
   def initialize aStatus
     @status = aStatus
   end
@@ -316,35 +320,23 @@ class Think
     @status
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "think status -> #{@status}"
-  end
 end
 
-class Size
+class Size < AimlTag
   def execute
     Category.cardinality.to_s
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "size -> #{execute}"
-  end
 end
 
-class Sys_Date
+class Sys_Date < AimlTag
   def execute
     Date.today.to_s
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "date -> #{execute}"
-  end
 end
 
-class Srai
+class Srai < AimlTag
   def initialize anObj = nil
     @pattern = []
     add(anObj) if anObj
@@ -357,13 +349,10 @@ class Srai
   def pattern
     @pattern.map(&:to_s).join('').strip
   end
-
-  def inspect
-    "srai -> #{pattern}"
-  end
+  alias_method :to_inspect, :pattern
 end
 
-class Person2
+class Person2 < AimlTag
   @@environment = Environment.new
   @@swap = {'me' => 'you', 'you' => 'me'}
 
@@ -390,13 +379,9 @@ class Person2
     end
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "person2 -> #{execute}"
-  end
 end
 
-class Person
+class Person < AimlTag
   @@environment = Environment.new
   @@swap = {'male' => {'me'     => 'him',
                        'my'     => 'his',
@@ -430,13 +415,9 @@ class Person
     end
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "person-> #{execute}"
-  end
 end
 
-class Gender
+class Gender < AimlTag
   def initialize
     @sentence = []
   end
@@ -464,13 +445,9 @@ class Gender
     end
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "gender -> #{execute}"
-  end
 end
 
-class Command
+class Command < AimlTag
   def initialize text
     @command = text
   end
@@ -479,10 +456,6 @@ class Command
     `#{@command}`
   end
   alias_method :to_s, :execute
-
-  def inspect
-    "cmd -> #{@command}"
-  end
 end
 
 end #ProgramR

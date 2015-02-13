@@ -16,4 +16,5 @@ Gem::Specification.new do |gem|
   gem.version       = Programr::VERSION
 
   gem.add_development_dependency 'rspec', '~> 3.2.0'
+  gem.add_dependency 'activesupport', '~> 4.1.8'
 end
