@@ -1,41 +1,27 @@
 # ProgramR
 
-### Aside:
+## About
 
-This is just a simple port of http://aiml-programr.rubyforge.org/ (authored in 2007), to something
-a tiny bit more usable. No new code really, I just sorta took the necessary parts to turn it into a gem for curiosity's sake.
-
-AIML itself seems pretty simple, and weak as far as pattern matching goes, but the ALICE bot has won the Loebner prize, so there's that.
-
-### About:
+This is a fork of http://aiml-programr.rubyforge.org/ (authored in 2007) from [robertjwhitney/programr](https://github.com/robertjwhitney/programr).
 
 ProgramR is a Ruby implementation of an interpreter for the Artificial Intelligence Markup Language (AIML) based on the work of Dr. Wallace and defined by the Alicebot and AIML Architecture Committee of the A.L.I.C.E. AI Foundation http://alicebot.org
 
-Some of the ALICE AIML files have thrown parse errors with certain caraters in my tests, so a subset is available here: https://github.com/robertjwhitney/alice-programr
+Some of the ALICE AIML files have thrown parse errors with certain caraters in [@robertjwhitney](https://github.com/robertjwhitney)'s tests, so a subset is available here: https://github.com/robertjwhitney/alice-programr
 
-
-### Original Authors:
-
-Mauro Cicio, Nicholas H.Tollervey and Ben Minton
+**Original Authors**: Mauro Cicio, Nicholas H.Tollervey and Ben Minton
 
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'programr'
+    gem 'programr', github: 'bolasblack/programr', branch: 'master'
 
 And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install programr
-
 You can find a set of ALICE AIML files hosted at http://code.google.com/p/aiml-en-us-foundation-alice
-
-Some of them have thrown errors in my tests so a subset is available here: https://github.com/robertjwhitney/alice-programr
 
 ## Usage
 
