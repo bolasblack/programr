@@ -57,8 +57,44 @@ describe ProgramR::Facade do
       it_behaves_like 'alice', response: 'You sound very nice.', with_stimula: 'I AM GRAY', in_test: 'default item'
     end
 
-    it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'atomic test', in_test: 'ATOMIC'
-    it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'srai test',  in_test: 'SRAI'
+    describe 'with srai tag' do
+      it 'evaluates the contents and converts the result to normalized form' do
+        robot.learn <<-AIML
+<category>
+  <pattern>hello</pattern>
+  <template>world</template>
+</category>
+<category>
+  <pattern>test</pattern>
+  <template>
+    <srai>hello</srai>
+  </template>
+</category>
+        AIML
+        expect(robot.get_reaction 'test').to eq 'world'
+      end
+
+      it 'can included by other tag' do
+        robot.learn <<-AIML
+<category>
+  <pattern>hello</pattern>
+  <template>world</template>
+</category>
+<category>
+  <pattern>test</pattern>
+  <template>
+    <condition name="gender">
+      <li value="male"><srai>hello</srai></li>
+      <li value="famale">hello</li>
+    </condition>
+  </template>
+</category>
+        AIML
+        expect(robot.get_reaction 'test').to eq 'world'
+      end
+    end
+
+    it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'srai test'
     it_behaves_like 'alice', response: 'new test succeeded', with_stimula: 'atomic test', in_test: 'TOPIC'
     it_behaves_like 'alice', response: 'that test 1', with_stimula: 'that test',  in_test: 'THAT 1'
     it_behaves_like 'alice', response: 'that test 2', with_stimula:'that test', in_test: "THAT 2"
@@ -92,5 +128,6 @@ describe ProgramR::Facade do
     it_behaves_like 'alice', response: 'ALSO MINE IS AC MILAN', with_stimula:'AC milan'
     it_behaves_like 'alice', response: 'WHAT IS YOUR FAVORITE FOOTBALL TEAM', with_stimula:'test thatstar'
     it_behaves_like 'alice', response: 'ok yes ALSO MINE IS AC MILAN', with_stimula: 'yes AC milan'
+
   end
 end

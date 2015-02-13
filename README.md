@@ -68,6 +68,11 @@ while true
   STDOUT.puts "<< #{reaction}"
 end
 ```
+
+## Todo
+
+* Support `<srai>` in `<person>`, `<person2>` and `<set_*>`
+
 ## Contributing
 
 1. Fork it

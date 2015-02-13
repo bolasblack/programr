@@ -41,21 +41,10 @@ module ProgramR
       starGreedy = []
       #TODO verify if case insensitive. Cross check with parser
       @history.updateStimula(stimula.upcase) if firstStimula
-      thinkIsActive = false
       reaction = @graph_master.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
+      #puts reaction.inspect
       @history.updateStarMatches starGreedy
-      res = reaction.map do |token|
-        if token.is_a? Srai
-          token = get_reaction token.pattern, false
-          @history.updateStarMatches starGreedy
-        end
-        if token.is_a? Think
-          thinkIsActive = !thinkIsActive
-          next
-        end
-        value = token.to_s
-        thinkIsActive ? '' : value
-      end.reduce([]) do |memo, part|
+      res = evaluate(reaction, starGreedy).flatten.reduce([]) do |memo, part|
         # clean case [" ", "part 1 ", " ", "part 2", " "]
         if !memo.last || !memo.last.end_with?(' ')
           memo << part
@@ -73,9 +62,30 @@ module ProgramR
       @graph_master.to_s
     end
 
-    #  def getBotName()end
-
     private
+
+    def evaluate reaction, starGreedy
+      thinkIsActive = false
+      reaction.map do |token|
+        if token.is_a? Srai
+          token = get_reaction token.pattern, false
+          @history.updateStarMatches starGreedy
+        end
+        if token.is_a? Think
+          thinkIsActive = !thinkIsActive
+          next
+        end
+
+        responses = token.is_a?(String) ? token : token.execute
+        if thinkIsActive
+          ''
+        elsif responses.is_a? Array
+          evaluate responses, starGreedy
+        else
+          responses
+        end
+      end
+    end
 
     def read_aiml files_and_dirs, &block
       files_and_dirs.map do |file|

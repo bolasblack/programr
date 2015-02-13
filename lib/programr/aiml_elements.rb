@@ -8,6 +8,20 @@ class AimlTag
     inspect_str = respond_to?(:to_inspect, true) ? to_inspect : execute
     "<#{self.class.name.demodulize.tableize.singularize} -> #{inspect_str}>"
   end
+
+  def to_s
+    respond_to?(:execute) ? execute : super
+  end
+
+  private
+
+  def to_response inputs = nil, need_puts = false
+    return [''] if inputs.nil?
+    inputs = [inputs].to_a unless inputs.is_a? Array
+    result = inputs.map { |input| input.is_a?(Srai) ? input : input.to_s }
+    puts result if need_puts
+    result
+  end
 end
 
 class Category < AimlTag
@@ -85,7 +99,6 @@ class Random < AimlTag
   def execute
     @condition_items.sample.execute
   end
-  alias_method :to_s, :execute
 end
 
 class Condition < AimlTag
@@ -116,7 +129,6 @@ class Condition < AimlTag
   def execute
     condition_valid? ? text : ''
   end
-  alias_method :to_s, :execute
 
   def condition_valid?
     return false if @property.nil?
@@ -147,7 +159,7 @@ class Condition < AimlTag
 
   def text
     texts = @conditions[@currentCondition]
-    (texts.nil? || texts.empty?) ? '' : texts.map(&:to_s).join('').strip
+    to_response (texts.nil? || texts.empty?) ? [''] : texts
   end
 end
 
@@ -171,9 +183,8 @@ class ListCondition < Condition
     @condition_items.each do |item|
       return item.execute if item.condition_valid?
     end
-    default_item_result || ''
+    default_item_result || to_response
   end
-  alias_method :to_s, :execute
 
   private
 
@@ -233,8 +244,8 @@ class SetTag < AimlTag
 
   def execute
     @@environment.set(@localname, value)
+    to_response value
   end
-  alias_method :to_s, :execute
 
   private
 
@@ -252,9 +263,8 @@ class Input < AimlTag
   end
 
   def execute
-    @@environment.getStimula(@index)
+    to_response @@environment.getStimula(@index)
   end
-  alias_method :to_s, :execute
 
   private
 
@@ -273,9 +283,8 @@ class Star < AimlTag
   end
 
   def execute
-    @@environment.send(@star, @index)
+    to_response @@environment.send(@star, @index)
   end
-  alias_method :to_s, :execute
 
   private
 
@@ -297,10 +306,12 @@ class ReadOnlyTag < AimlTag
   end
 
   def execute
-    return @@environment.get(@localname) if @attributed.empty?
-    @@environment.get(@attributed['name'])
+    if @attributed.empty?
+      to_response @@environment.get(@localname)
+    else
+      to_response @@environment.get(@attributed['name'])
+    end
   end
-  alias_method :to_s, :execute
 
   private
 
@@ -317,23 +328,20 @@ class Think < AimlTag
   end
 
   def execute
-    @status
+    to_response @status
   end
-  alias_method :to_s, :execute
 end
 
 class Size < AimlTag
   def execute
-    Category.cardinality.to_s
+    to_response Category.cardinality.to_s
   end
-  alias_method :to_s, :execute
 end
 
 class Sys_Date < AimlTag
   def execute
-    Date.today.to_s
+    to_response Date.today.to_s
   end
-  alias_method :to_s, :execute
 end
 
 class Srai < AimlTag
@@ -350,35 +358,6 @@ class Srai < AimlTag
     @pattern.map(&:to_s).join('').strip
   end
   alias_method :to_inspect, :pattern
-end
-
-class Person2 < AimlTag
-  @@environment = Environment.new
-  @@swap = {'me' => 'you', 'you' => 'me'}
-
-  def initialize
-    @sentence = []
-  end
-
-  def add anObj
-    @sentence.push anObj
-  end
-
-  def execute
-    res = ''
-    @sentence.each { |token| res += token.to_s }
-    gender = @@environment.get('gender')
-    res.gsub(/\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i) do
-      if $3
-        $2.downcase+' '+@@swap[$3.downcase]
-      elsif $1.downcase == 'you'
-        'i'
-      elsif $1.downcase == 'i'
-        'you'
-      end
-    end
-  end
-  alias_method :to_s, :execute
 end
 
 class Person < AimlTag
@@ -407,14 +386,38 @@ class Person < AimlTag
   end
 
   def execute
-    res = ''
-    @sentence.each { |token| res += token.to_s }
+    res = @sentence.map(&:to_s).join('').strip
     gender = @@environment.get('gender')
-    res.gsub(/\b(she|he|i|me|my|myself|mine)\b/i) do
+    to_response(res.gsub(/\b(she|he|i|me|my|myself|mine)\b/i) do
       @@swap[gender][$1.downcase]
-    end
+    end)
   end
-  alias_method :to_s, :execute
+end
+
+class Person2 < AimlTag
+  @@environment = Environment.new
+  @@swap = {'me' => 'you', 'you' => 'me'}
+
+  def initialize
+    @sentence = []
+  end
+
+  def add anObj
+    @sentence.push anObj
+  end
+
+  def execute
+    res = @sentence.map(&:to_s).join('').strip
+    to_response(res.gsub(/\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i) do
+      if $3
+        $2.downcase + ' '+ @@swap[$3.downcase]
+      elsif $1.downcase == 'you'
+        'i'
+      elsif $1.downcase == 'i'
+        'you'
+      end
+    end)
+  end
 end
 
 class Gender < AimlTag
@@ -427,24 +430,17 @@ class Gender < AimlTag
   end
 
   def execute
-    res = ''
-    @sentence.each { |token| res += token.to_s }
+    res = @sentence.map(&:to_s).join('').strip
     res.gsub(/\b(she|he|him|his|(for|with|on|in|to) her|her)\b/i) do
-      pronoun = $1.downcase
-      if pronoun == 'she'
-        'he'
-      elsif pronoun ==  'he'
-        'she'
-      elsif pronoun ==  'him' || pronoun ==  'his'
-        'her'
-      elsif pronoun ==  'her'
-        'his'
-      else
-        $2.downcase + ' ' + 'him'
+      case $1.downcase
+      when 'she' then 'he'
+      when 'he' then 'she'
+      when 'him', 'his' then 'her'
+      when 'her' then 'his'
+      else "#{$2.downcase} him"
       end
     end
   end
-  alias_method :to_s, :execute
 end
 
 class Command < AimlTag
@@ -453,9 +449,8 @@ class Command < AimlTag
   end
 
   def execute
-    `#{@command}`
+    to_response `#{@command}`
   end
-  alias_method :to_s, :execute
 end
 
 end #ProgramR
