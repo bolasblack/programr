@@ -131,9 +131,10 @@ class Condition < AimlTag
   end
 
   def condition_valid?
-    return false if @property.nil?
-    if @@environment.get(@property).nil? && @currentCondition == '_default'
-      true
+    if @property.nil?
+      false
+    elsif @@environment.get(@property).nil?
+      @currentCondition.nil?
     elsif @@environment.get(@property) =~ /^#{@currentCondition}$/
       true
     else
@@ -143,9 +144,13 @@ class Condition < AimlTag
 
   private
 
+  def to_inspect
+    "#{@property}: #{@currentCondition} => #{text}"
+  end
+
   def pick_condition attributes
     name = string_not_empty(attributes['name']) ? attributes['name'] : @property
-    value = string_not_empty(attributes['value']) ? attributes['value'] : '_default'
+    value = string_not_empty(attributes['value']) ? attributes['value'] : nil
     yield name, parse_value(value)
   end
 
@@ -154,7 +159,7 @@ class Condition < AimlTag
   end
 
   def parse_value value
-    value.sub '*', '.*'
+    value && value.sub('*', '.*')
   end
 
   def text
@@ -210,7 +215,7 @@ class ConditionItem < Condition
   end
 
   def default_item?
-    @property.nil? && @currentCondition == '_default'
+    @property.nil? && @currentCondition.nil?
   end
 
   def execute

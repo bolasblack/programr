@@ -77,8 +77,8 @@
     <template>
       You sound very
       <condition>
-        <li name="not_exist_attribute" value="">attractive.</li>
-        <li>handsome.</li>
+        <li name="not_exist_attribute" value="some value">attractive.</li>
+        <li name="not_exist_attribute" value="">handsome.</li>
       </condition>
     </template>
   </category>
@@ -89,6 +89,17 @@
       You sound very
       <condition>
         <li name="null_value_attribute" value="">mysterious.</li>
+        <li>handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM BROWN</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="null_value_attribute" value="some value">mysterious.</li>
         <li>handsome.</li>
       </condition>
     </template>

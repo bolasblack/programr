@@ -59,7 +59,7 @@ describe ProgramR::Facade do
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM RED', in_test: 'normal case'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLOND', in_test: 'item value include star'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLACK', in_test: 'switch style'
-      it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula: 'I AM WHITE', in_test: 'not exist attribute'
+      it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM WHITE', in_test: 'not exist attribute'
       it_behaves_like 'alice', response: 'You sound very mysterious.', with_stimula: 'I AM BLUE', in_test: 'null value'
       it_behaves_like 'alice', response: 'You sound very nice.', with_stimula: 'I AM GRAY', in_test: 'default item'
     end
