@@ -58,6 +58,10 @@ end
 ## Todo
 
 * Support `<srai>` in `<person>`, `<person2>` and `<set_*>`
+* `<person>`, `<person2>`, `<gender>` can support simple i18n
+* Support chinese
+* Support [AIML 2.0 Draft](https://docs.google.com/document/d/1wNT25hJRyupcG51aO89UcQEiG-HkXRXusukADpFnDs4/pub)
+* Clean test
 
 ## Contributing
 
