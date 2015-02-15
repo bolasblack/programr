@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<aiml version="1.0.1" xmlns="http://alicebot.org/2001/AIML-1.0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://alicebot.org/2001/AIML-1.0.1 http://aitools.org/aiml/schema/AIML.xsd">
+
+  <category>
+    <pattern>hello</pattern>
+    <template>world</template>
+  </category>
+
+  <category>
+    <pattern>test1</pattern>
+    <template>
+      <srai>hello</srai>
+    </template>
+  </category>
+
+  <category>
+    <pattern>test2</pattern>
+    <template>
+      <condition name="gender">
+        <li value="male"><srai>hello</srai></li>
+        <li value="famale">hello</li>
+      </condition>
+    </template>
+  </category>
+</aiml>

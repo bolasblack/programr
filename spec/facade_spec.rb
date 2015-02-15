@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'securerandom'
 
 describe ProgramR::Facade do
@@ -21,8 +22,11 @@ describe ProgramR::Facade do
     end
 
     it "can read aiml folder" do
-      robot.learn ['spec']
-      expect(robot.get_reaction 'atomic test').to eq 'test succeeded'
+      robot.learn ['spec/data/for_learn_test']
+      expect(robot.get_reaction 'single file').to eq 'OK'
+      expect(robot.get_reaction 'in dir').to eq 'OK'
+      expect(robot.get_reaction 'in sub dir').to eq 'OK'
+      expect(robot.get_reaction 'badfile').to eq ''
     end
   end
 
@@ -36,12 +40,14 @@ describe ProgramR::Facade do
         message = "can handle message #{opt[:with_stimula]}"
       end
       it message do
+        robot.learn aiml if self.respond_to? :aiml
         response = opt[:response].is_a?(Proc) ? opt[:response].call : opt[:response]
         expect(robot.get_reaction(opt[:with_stimula])).to eq response
       end
     end
 
     describe 'with paratactic condition' do
+      before { robot.learn ['spec/data/condition.aiml'] }
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BROWN', in_test: 'normal case'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM CYAN', in_test: 'item value include start'
       it_behaves_like 'alice', response: 'You sound very attractive.', with_stimula: 'I AM GREEN', in_test: 'not exist attribute'
@@ -49,6 +55,7 @@ describe ProgramR::Facade do
     end
 
     describe 'with condition list' do
+      before { robot.learn ['spec/data/condition.aiml'] }
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM RED', in_test: 'normal case'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLOND', in_test: 'item value include star'
       it_behaves_like 'alice', response: 'You sound very handsome.', with_stimula: 'I AM BLACK', in_test: 'switch style'
@@ -58,40 +65,15 @@ describe ProgramR::Facade do
     end
 
     describe 'with srai tag' do
-      it 'evaluates the contents and converts the result to normalized form' do
-        robot.learn <<-AIML
-<category>
-  <pattern>hello</pattern>
-  <template>world</template>
-</category>
-<category>
-  <pattern>test</pattern>
-  <template>
-    <srai>hello</srai>
-  </template>
-</category>
-        AIML
-        expect(robot.get_reaction 'test').to eq 'world'
-      end
+      before { robot.learn ['spec/data/srai.aiml'] }
+      it_behaves_like 'alice', response: 'world', with_stimula: 'test1', in_test: 'normal case'
+      it_behaves_like 'alice', response: 'world', with_stimula: 'test2', in_test: 'included by other tag'
+    end
 
-      it 'can included by other tag' do
-        robot.learn <<-AIML
-<category>
-  <pattern>hello</pattern>
-  <template>world</template>
-</category>
-<category>
-  <pattern>test</pattern>
-  <template>
-    <condition name="gender">
-      <li value="male"><srai>hello</srai></li>
-      <li value="famale">hello</li>
-    </condition>
-  </template>
-</category>
-        AIML
-        expect(robot.get_reaction 'test').to eq 'world'
-      end
+    describe 'with set tag' do
+      before { robot.learn ['spec/data/set.aiml'] }
+      it_behaves_like 'alice', response: 'male.female.female', with_stimula:'test set', in_test: 'normal case'
+      it_behaves_like 'alice', response: "Got it, INPUT", with_stimula: 'input', in_test: 'set star matched content'
     end
 
     it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'srai test'
@@ -111,7 +93,6 @@ describe ProgramR::Facade do
     it_behaves_like 'alice', response: 'are you never tired to do the same things every day?', with_stimula:'question test'
     it_behaves_like 'alice', response: 'localhost', with_stimula:'get test 2'
     it_behaves_like 'alice', response: 'ok.', with_stimula:'think test. i am male'
-    it_behaves_like 'alice', response: 'male.female.female', with_stimula:'test set'
     it_behaves_like 'alice', response: 'The sentence test', with_stimula:'sentence test'
     it_behaves_like 'alice', response: 'The Formal Test', with_stimula:'formal test'
     it_behaves_like 'alice', response: 'A', with_stimula:'random test'

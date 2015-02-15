@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<aiml version="1.0.1" xmlns="http://alicebot.org/2001/AIML-1.0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://alicebot.org/2001/AIML-1.0.1 http://aitools.org/aiml/schema/AIML.xsd">
+
+  <category>
+    <pattern>I AM BROWN</pattern>
+    <template>
+      You sound very
+      <condition name="gender" value="female">attractive.</condition>
+      <condition name="gender" value="male">handsome.</condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM CYAN</pattern>
+    <template>
+      You sound very
+      <condition name="gender" value="female">attractive.</condition>
+      <condition name="gender" value="*ale">handsome.</condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM GREEN</pattern>
+    <template>
+      You sound very
+      <condition name="not_exist_attribute" value="value">handsome.</condition>
+      <condition name="not_exist_attribute" value="">attractive.</condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM PINK</pattern>
+    <template>
+      You sound very
+      <condition name="null_value_attribute" value="value">handsome.</condition>
+      <condition name="null_value_attribute" value="">attractive.</condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM RED</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="gender" value="female">attractive.</li>
+        <li name="gender" value="male">handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM BLOND</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="gender" value="female">attractive.</li>
+        <li name="gender" value="*ale">handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM BLACK</pattern>
+    <template>
+      You sound very
+      <condition name="gender">
+        <li value="female">attractive.</li>
+        <li value="male">handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM WHITE</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="not_exist_attribute" value="">attractive.</li>
+        <li>handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM BLUE</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="null_value_attribute" value="">mysterious.</li>
+        <li>handsome.</li>
+      </condition>
+    </template>
+  </category>
+
+  <category>
+    <pattern>I AM GRAY</pattern>
+    <template>
+      You sound very
+      <condition>
+        <li name="gender" value="famale">attractive.</li>
+        <li>nice.</li>
+      </condition>
+    </template>
+  </category>
+
+</aiml>
