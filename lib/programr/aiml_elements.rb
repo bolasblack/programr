@@ -298,7 +298,7 @@ class Star < AimlTag
   end
 end
 
-class ReadOnlyTag < AimlTag
+class GetTag < AimlTag
   @@environment = Environment.new
 
   def initialize aLocalname, someAttributes
@@ -311,11 +311,7 @@ class ReadOnlyTag < AimlTag
   end
 
   def execute
-    if @attributed.empty?
-      to_response @@environment.get(@localname)
-    else
-      to_response @@environment.get(@attributed['name'])
-    end
+    to_response @@environment.get(@attributed['name'] || @localname)
   end
 
   private

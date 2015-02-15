@@ -35,7 +35,7 @@ class AimlParser
       openLabels[-1].add(Star.new(localname, attributes))
     end
 
-### condition -- condition
+### condition
     @parser.listen(%w{ condition }) do |uri, localname, qname, attributes|
       if attributes.has_key?('value')
         currentCondition = Condition.new(attributes)
@@ -80,12 +80,13 @@ class AimlParser
       currentConditionItem = nil
       openLabels.pop
     end
-### end condition -- condition
+### end condition
 
+### get
     @parser.listen([/^get.*/, /^bot_*/, 'for_fun', /that$/, 'question']) do
                    |uri, localname, qname, attributes|
       unless openLabels.empty?
-        openLabels[-1].add(ReadOnlyTag.new(localname, attributes))
+        openLabels[-1].add(GetTag.new(localname, attributes))
       end
     end
 
@@ -97,13 +98,14 @@ class AimlParser
       end
 
       if patternIsOpen
-        category.add_pattern(ReadOnlyTag.new(localname, {}))
+        category.add_pattern(GetTag.new(localname, {}))
       elsif thatIsOpen
-        category.add_that(ReadOnlyTag.new(localname, {}))
+        category.add_that(GetTag.new(localname, {}))
       else
-        openLabels[-1].add(ReadOnlyTag.new(localname, {}))
+        openLabels[-1].add(GetTag.new(localname, {}))
       end
     end
+### end get
 
 ### set
     @parser.listen([/^set_*/, 'set']) do |uri, localname, qname, attributes|

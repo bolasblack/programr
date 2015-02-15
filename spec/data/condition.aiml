@@ -88,18 +88,7 @@
     <template>
       You sound very
       <condition>
-        <li name="null_value_attribute" value="">mysterious.</li>
-        <li>handsome.</li>
-      </condition>
-    </template>
-  </category>
-
-  <category>
-    <pattern>I AM BROWN</pattern>
-    <template>
-      You sound very
-      <condition>
-        <li name="null_value_attribute" value="some value">mysterious.</li>
+        <li name="null_value_attribute" value="">attractive.</li>
         <li>handsome.</li>
       </condition>
     </template>
@@ -111,6 +100,7 @@
       You sound very
       <condition>
         <li name="gender" value="famale">attractive.</li>
+        <li name="gender" value="">nameless.</li>
         <li>nice.</li>
       </condition>
     </template>
