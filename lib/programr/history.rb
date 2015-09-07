@@ -4,30 +4,24 @@ module ProgramR
   class History
     include Singleton
 
+    attr_accessor :topic
+
     def initialize
       @topic       = 'default'
       @inputs      = []
       @responses   = []
-      @starGreedy  = []
-      @thatGreedy  = []
-      @topicGreedy = []
-    end
-
-    def topic
-      @topic
-    end
-
-    def updateTopic(aTopic)
-      @topic = aTopic
+      @star_greedy  = []
+      @that_greedy  = []
+      @topic_greedy = []
     end
 
 
-    def getStimula(anIndex)
-      @inputs[anIndex]
+    def get_stimula index
+      @inputs[index]
     end
 
-    def updateStimula(aStimula)
-      @inputs.unshift(aStimula)
+    def update_stimula stimula
+      @inputs.unshift stimula
     end
 
 
@@ -52,39 +46,39 @@ module ProgramR
     end
 
 
-    def getStar(anIndex)
-      return 'undef' unless @starGreedy[anIndex]
-      @starGreedy[anIndex].join(' ')
+    def get_star index
+      return 'undef' unless @star_greedy[index]
+      @star_greedy[index].join(' ')
     end
 
-    def getThatStar(anIndex)
-      return 'undef' unless @thatGreedy[anIndex]
-      @thatGreedy[anIndex].join(' ')
+    def get_that_star index
+      return 'undef' unless @that_greedy[index]
+      @that_greedy[index].join(' ')
     end
 
-    def getTopicStar(anIndex)
-      return 'undef' unless @topicGreedy[anIndex]
-      @topicGreedy[anIndex].join(' ')
+    def get_topic_star index
+      return 'undef' unless @topic_greedy[index]
+      @topic_greedy[index].join(' ')
     end
 
-    def updateResponse(aResponse)
-      @responses.unshift(aResponse)
+    def update_response response
+      @responses.unshift response
     end
 
-    def updateStarMatches(aStarGreedyArray)
-      @starGreedy = []
-      @thatGreedy = []
-      @topicGreedy = []
-      currentGreedy = @starGreedy
-      aStarGreedyArray.each do |greedy|
+    def update_star_matches star_greedy_array
+      @star_greedy = []
+      @that_greedy = []
+      @topic_greedy = []
+      current_greedy = @star_greedy
+      star_greedy_array.each do |greedy|
         if greedy == '<that>'
-          currentGreedy = @thatGreedy
+          current_greedy = @that_greedy
         elsif greedy == '<topic>'
-          currentGreedy = @topicGreedy
+          current_greedy = @topic_greedy
         elsif greedy == '<newMatch>'
-          currentGreedy.push([])
+          current_greedy.push([])
         else
-          currentGreedy[-1].push(greedy)
+          current_greedy[-1].push(greedy)
         end
       end
     end

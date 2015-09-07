@@ -268,13 +268,13 @@ class Input < AimlTag
   end
 
   def execute
-    to_response @@environment.getStimula(@index)
+    to_response @@environment.get_stimula @index
   end
 
   private
 
   def to_inspect
-    @@environment.getStimula(@index)
+    @@environment.get_stimula @index
   end
 end
 

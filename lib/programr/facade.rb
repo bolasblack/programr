@@ -40,10 +40,10 @@ module ProgramR
     def get_reaction(stimula, firstStimula = true)
       starGreedy = []
       #TODO verify if case insensitive. Cross check with parser
-      @history.updateStimula(stimula.upcase) if firstStimula
+      @history.update_stimula(stimula.upcase) if firstStimula
       reaction = @graph_master.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
       #puts reaction.inspect
-      @history.updateStarMatches starGreedy
+      @history.update_star_matches starGreedy
       res = evaluate(reaction, starGreedy).flatten.reduce([]) do |memo, part|
         # clean case [" ", "part 1 ", " ", "part 2", " "]
         if !memo.last || !memo.last.end_with?(' ')
@@ -54,7 +54,7 @@ module ProgramR
         memo
       end.join('').strip
       #TODO verify if case insensitive. Cross check with main program & parser
-      @history.updateResponse(res.upcase) if firstStimula
+      @history.update_response(res.upcase) if firstStimula
       res
     end
 
@@ -69,7 +69,7 @@ module ProgramR
       reaction.map do |token|
         if token.is_a? Srai
           token = get_reaction token.pattern, false
-          @history.updateStarMatches starGreedy
+          @history.update_star_matches starGreedy
         end
         if token.is_a? Think
           thinkIsActive = !thinkIsActive

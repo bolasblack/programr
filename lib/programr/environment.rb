@@ -25,13 +25,13 @@ class Environment
     @readonly_tags = YAML::load(File.open(file))
   end
 
-  def get(aTag)
-    send(aTag)
+  def get key
+    send key
   end
 
-  def set aTag, aValue
-    @history.updateTopic(aValue) if aTag == 'topic'
-    @readonly_tags[aTag] = aValue
+  def set key, value
+    @history.topic = value if key == 'topic'
+    @readonly_tags[key] = value
   end
 
   def method_missing(methId)
@@ -47,16 +47,16 @@ class Environment
     ''
   end
 
-  def star(anIndex)
-    @history.getStar(anIndex)
+  def star index
+    @history.get_star index
   end
 
-  def thatstar(anIndex)
-    @history.getThatStar(anIndex)
+  def thatstar index
+    @history.get_that_star index
   end
 
-  def topicstar(anIndex)
-    @history.getTopicStar(anIndex)
+  def topicstar index
+    @history.get_topic_star index
   end
 
   def male
@@ -73,8 +73,8 @@ class Environment
     @readonly_tags['question'][rand(@readonly_tags['question'].length-1)]
   end
 
-  def getStimula(anIndex)
-    @history.getStimula(anIndex)
+  def get_stimula index
+    @history.get_stimula index
   end
 end
 end
