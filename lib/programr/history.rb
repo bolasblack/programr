@@ -51,12 +51,12 @@ module ProgramR
       @star_greedy[index].join(' ')
     end
 
-    def get_that_star index
+    def get_thatstar index
       return 'undef' unless @that_greedy[index]
       @that_greedy[index].join(' ')
     end
 
-    def get_topic_star index
+    def get_topicstar index
       return 'undef' unless @topic_greedy[index]
       @topic_greedy[index].join(' ')
     end

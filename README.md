@@ -34,7 +34,7 @@ Bundler.setup :default
 require 'programr'
 
 # You can custom readonly tags
-ProgramR::Environment.readonly_tags_file = 'test/data/readOnlyTags.yaml'
+ProgramR::Environment.new.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
 
 robot = ProgramR::Facade.new
 
@@ -62,6 +62,8 @@ end
 * Support chinese
 * Support [AIML 2.0 Draft](https://docs.google.com/document/d/1wNT25hJRyupcG51aO89UcQEiG-HkXRXusukADpFnDs4/pub)
 * Clean test
+* Documents
+    * custom `Environment`
 
 ## Contributing
 

@@ -76,6 +76,11 @@ describe ProgramR::Facade do
       it_behaves_like 'alice', response: "Got it, INPUT", with_stimula: 'input', in_test: 'set star matched content'
     end
 
+    describe 'with question tag' do
+      before { srand 2 }
+      it_behaves_like 'alice', response: 'are you never tired to do the same things every day?', with_stimula:'question test'
+    end
+
     it_behaves_like 'alice', response: 'test succeeded', with_stimula: 'srai test'
     it_behaves_like 'alice', response: 'new test succeeded', with_stimula: 'atomic test', in_test: 'TOPIC'
     it_behaves_like 'alice', response: 'that test 1', with_stimula: 'that test',  in_test: 'THAT 1'
@@ -90,7 +95,6 @@ describe ProgramR::Facade do
     it_behaves_like 'alice', response: 'test bot name', with_stimula:'get test 1'
     it_behaves_like 'alice', response: 'TEST SPACE', with_stimula:'justbeforethat tag test'
     it_behaves_like 'alice', response: 'TEST SPACE', with_stimula:'that tag test'
-    it_behaves_like 'alice', response: 'are you never tired to do the same things every day?', with_stimula:'question test'
     it_behaves_like 'alice', response: 'localhost', with_stimula:'get test 2'
     it_behaves_like 'alice', response: 'ok.', with_stimula:'think test. i am male'
     it_behaves_like 'alice', response: 'The sentence test', with_stimula:'sentence test'

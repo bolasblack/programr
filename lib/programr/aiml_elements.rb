@@ -1,9 +1,12 @@
+require 'programr/history'
 require 'programr/environment'
 require 'active_support/core_ext/string'
 
 module ProgramR
 
 class AimlTag
+  @@environment = Environment.new
+
   def inspect
     inspect_str = respond_to?(:to_inspect, true) ? to_inspect : execute
     "<#{self.class.name.demodulize.tableize.singularize} -> #{inspect_str}>"
@@ -11,6 +14,14 @@ class AimlTag
 
   def to_s
     respond_to?(:execute) ? execute : super
+  end
+
+  def self.environment
+    @@environment
+  end
+
+  def self.environment= env
+    @@environment = env
   end
 
   private
@@ -82,8 +93,6 @@ class Template < AimlTag
 end
 
 class Random < AimlTag
-  @@environment = Environment.new
-
   def initialize
     @condition_items = []
   end
@@ -102,8 +111,6 @@ class Random < AimlTag
 end
 
 class Condition < AimlTag
-  @@environment = Environment.new
-
   def initialize someAttributes
     @conditions = {}
     pick_condition someAttributes do |name, value|
@@ -228,8 +235,6 @@ class ConditionItem < Condition
 end
 
 class SetTag < AimlTag
-  @@environment = Environment.new
-
   def initialize aLocalname, attributes
     if attributes['name'].nil?
       @localname = aLocalname.sub(/^set_/, '')
@@ -260,27 +265,23 @@ class SetTag < AimlTag
 end
 
 class Input < AimlTag
-  @@environment = Environment.new
-
   def initialize(someAttributes)
     @index = 1
     @index = someAttributes['index'].to_i if someAttributes.has_key?('index')
   end
 
   def execute
-    to_response @@environment.get_stimula @index
+    to_response to_inspect
   end
 
   private
 
   def to_inspect
-    @@environment.get_stimula @index
+    History.instance.get_stimula @index
   end
 end
 
 class Star < AimlTag
-  @@environment = Environment.new
-
   def initialize aStarName, someAttributes
     @star = aStarName
     @index = 0
@@ -288,19 +289,21 @@ class Star < AimlTag
   end
 
   def execute
-    to_response @@environment.send(@star, @index)
+    to_response get_star
   end
 
   private
 
+  def get_star
+    History.instance.send("get_#{@star}", @index)
+  end
+
   def to_inspect
-    "#{@star} #{@index} (#{@@environment.send(@star, @index)})"
+    "#{@star} #{@index} (#{get_star})"
   end
 end
 
 class GetTag < AimlTag
-  @@environment = Environment.new
-
   def initialize aLocalname, someAttributes
     @localname = aLocalname.sub(/^get_/, '')
     if someAttributes.has_key?('index') && @localname == 'that'
@@ -362,7 +365,6 @@ class Srai < AimlTag
 end
 
 class Person < AimlTag
-  @@environment = Environment.new
   @@swap = {'male' => {'me'     => 'him',
                        'my'     => 'his',
                        'myself' => 'himself',
@@ -396,7 +398,6 @@ class Person < AimlTag
 end
 
 class Person2 < AimlTag
-  @@environment = Environment.new
   @@swap = {'me' => 'you', 'you' => 'me'}
 
   def initialize
