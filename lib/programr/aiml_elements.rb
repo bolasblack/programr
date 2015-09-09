@@ -364,87 +364,6 @@ class Srai < AimlTag
   alias_method :to_inspect, :pattern
 end
 
-class Person < AimlTag
-  @@swap = {'male' => {'me'     => 'him',
-                       'my'     => 'his',
-                       'myself' => 'himself',
-                       'mine'   => 'his',
-                       'i'      => 'he',
-                       'he'     => 'i',
-                       'she'    => 'i'},
-            'female' => {'me'   => 'her',
-                         'my'     => 'her',
-                         'myself' => 'herself',
-	                       'mine'   => 'hers',
-                         'i'      => 'she',
-                         'he'     => 'i',
-                         'she'    => 'i'}}
-
-  def initialize
-    @sentence = []
-  end
-
-  def add anObj
-    @sentence.push anObj
-  end
-
-  def execute
-    res = @sentence.map(&:to_s).join('').strip
-    gender = @@environment.get('gender')
-    to_response(res.gsub(/\b(she|he|i|me|my|myself|mine)\b/i) do
-      @@swap[gender][$1.downcase]
-    end)
-  end
-end
-
-class Person2 < AimlTag
-  @@swap = {'me' => 'you', 'you' => 'me'}
-
-  def initialize
-    @sentence = []
-  end
-
-  def add anObj
-    @sentence.push anObj
-  end
-
-  def execute
-    res = @sentence.map(&:to_s).join('').strip
-    to_response(res.gsub(/\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i) do
-      if $3
-        $2.downcase + ' '+ @@swap[$3.downcase]
-      elsif $1.downcase == 'you'
-        'i'
-      elsif $1.downcase == 'i'
-        'you'
-      end
-    end)
-  end
-end
-
-class Gender < AimlTag
-  def initialize
-    @sentence = []
-  end
-
-  def add anObj
-    @sentence.push anObj
-  end
-
-  def execute
-    res = @sentence.map(&:to_s).join('').strip
-    res.gsub(/\b(she|he|him|his|(for|with|on|in|to) her|her)\b/i) do
-      case $1.downcase
-      when 'she' then 'he'
-      when 'he' then 'she'
-      when 'him', 'his' then 'her'
-      when 'her' then 'his'
-      else "#{$2.downcase} him"
-      end
-    end
-  end
-end
-
 class Command < AimlTag
   def initialize text
     @command = text
@@ -453,6 +372,81 @@ class Command < AimlTag
   def execute
     to_response `#{@command}`
   end
+end
+
+class ReplaceTag < AimlTag
+  Map = {}
+
+  def initialize
+    @sentence = []
+  end
+
+  def add anObj
+    @sentence.push anObj
+  end
+
+  def execute
+    res = @sentence.map(&:to_s).join('').strip
+    self.class::Map.each_pair do |matcher, fn|
+      res = res.gsub(matcher) { |match| fn.call $~ }
+    end
+    res
+  end
+end
+
+class Person < ReplaceTag
+  @@swap = {'male' => {'me'     => 'him',
+                       'my'     => 'his',
+                       'myself' => 'himself',
+                       'mine'   => 'his',
+                       'i'      => 'he',
+                       'he'     => 'i',
+                       'she'    => 'i'},
+
+            'female' => {'me'   => 'her',
+                         'my'     => 'her',
+                         'myself' => 'herself',
+	                       'mine'   => 'hers',
+                         'i'      => 'she',
+                         'he'     => 'i',
+                         'she'    => 'i'}}
+
+  Map = {
+    /\b(she|he|i|me|my|myself|mine)\b/i => -> (match) do
+      gender = @@environment.get('gender')
+      @@swap[gender][match[1].downcase]
+    end
+  }
+end
+
+class Person2 < ReplaceTag
+  @@swap = {'me' => 'you', 'you' => 'me'}
+
+  Map = {
+    /\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i => -> (match) do
+      if match[3]
+        match[2].downcase + ' '+ @@swap[match[3].downcase]
+      elsif match[1].downcase == 'you'
+        'i'
+      elsif match[1].downcase == 'i'
+        'you'
+      end
+    end
+  }
+end
+
+class Gender < ReplaceTag
+  Map = {
+    /\b(she|he|him|his|(for|with|on|in|to) her|her)\b/i => -> (match) do
+      case match[1].downcase
+      when 'she' then 'he'
+      when 'he' then 'she'
+      when 'him', 'his' then 'her'
+      when 'her' then 'his'
+      else "#{match[2].downcase} him"
+      end
+    end
+  }
 end
 
 end #ProgramR
