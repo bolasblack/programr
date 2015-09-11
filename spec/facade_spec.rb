@@ -1,10 +1,30 @@
 # coding: utf-8
 require 'securerandom'
+require File.join(File.dirname(__FILE__), './utils/fake_environment')
 
 describe ProgramR::Facade do
-  let(:robot) { ProgramR::Facade.new }
+  let(:robot) do
+    robot = ProgramR::Facade.new
+    robot.environment.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
+    robot
+  end
 
   after { robot.reset }
+
+  it 'can custon environment' do
+    env = FakeEnvironment.new
+    robot = ProgramR::Facade.new env
+    robot.learn <<-AIML
+ <category>
+   <pattern>set test</pattern>
+   <template>
+     <think><set_hello>world</set_hello></think>
+   </template>
+ </category>
+     AIML
+    robot.get_reaction 'set test'
+    expect(FakeEnvironment.new.get 'hello').to eq 'world'
+  end
 
   describe '#learn' do
     it "can read plain aiml" do
@@ -102,8 +122,8 @@ describe ProgramR::Facade do
     it_behaves_like 'alice', response: 'A', with_stimula:'random test'
     it_behaves_like 'alice', response: 'RANDOM TEST.FORMAL TEST', with_stimula:'test input'
     it_behaves_like 'alice', response: 'she told to him to take a hike but her ego was too much for him', with_stimula:'test gender'
-    it_behaves_like 'alice', response: 'she TOLD to him', with_stimula:'gender test 2 he told to her'
-    it_behaves_like 'alice', response: 'she TOLD MAURO EVERYTHING OK WITH her PROBLEM BUT i answers no', with_stimula:'i told mauro everything ok with my problem but he answers no'
+    it_behaves_like 'alice', response: 'she TOLD to him', with_stimula:'test gender wrap star he told to her'
+    it_behaves_like 'alice', response: 'he TOLD MAURO EVERYTHING OK WITH his PROBLEM BUT i ANSWERS NO', with_stimula:'test person wrap star i told mauro everything ok with my problem but he answers no'
     it_behaves_like 'alice', response: 'i say everything ok to you', with_stimula:'you say everything ok to me'
     it_behaves_like 'alice', response: 'star wins', with_stimula:'This is her'
     it_behaves_like 'alice', response: 'underscore wins', with_stimula:'This is you'

@@ -1,15 +1,12 @@
 require 'yaml'
-require 'singleton.new'
 require 'programr/history'
 
 module ProgramR
 class Environment
-  include Singleton
-
-  def initialize
+  def initialize history
     @readonly_tags_file = "#{File.dirname(__FILE__)}/../../conf/readOnlyTags.yaml"
     @readonly_tags = YAML::load(File.open(@readonly_tags_file))
-    @history = History.instance
+    @history = history
   end
 
   def get key

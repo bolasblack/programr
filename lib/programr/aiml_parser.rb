@@ -5,11 +5,14 @@ require 'programr/aiml_elements'
 
 # gli accenti nel file di input vengono trasformati in &apos; !!!
 #
-module  ProgramR
+module ProgramR
 class AimlParser
-  def initialize(learner); @learner = learner end
+  def initialize learner, environment
+    @learner = learner
+    @environment = environment
+  end
 
-  def parse(aiml)
+  def parse aiml
     @parser = REXML::Parsers::SAX2Parser.new(aiml)
     category             = nil
     openLabels           = []
@@ -38,9 +41,9 @@ class AimlParser
 ### condition
     @parser.listen(%w{ condition }) do |uri, localname, qname, attributes|
       if attributes.has_key?('value')
-        currentCondition = Condition.new(attributes)
+        currentCondition = Condition.new attributes, @environment
       else
-        currentCondition = ListCondition.new(attributes)
+        currentCondition = ListCondition.new attributes
       end
       openLabels[-1].add(currentCondition)
       openLabels.push(currentCondition)
@@ -64,7 +67,7 @@ class AimlParser
 
     @parser.listen(%w{ li }) do |uri, localname, qname, attributes|
       next unless currentCondition
-      currentConditionItem = ConditionItem.new attributes, currentCondition
+      currentConditionItem = ConditionItem.new attributes, currentCondition, @environment
       currentCondition.setListElement(currentConditionItem)
       openLabels.push currentConditionItem
     end
@@ -86,7 +89,7 @@ class AimlParser
     @parser.listen([/^get.*/, /^bot_*/, 'for_fun', /that$/, 'question']) do
                    |uri, localname, qname, attributes|
       unless openLabels.empty?
-        openLabels[-1].add(GetTag.new(localname, attributes))
+        openLabels[-1].add(GetTag.new localname, attributes, @environment)
       end
     end
 
@@ -98,18 +101,18 @@ class AimlParser
       end
 
       if patternIsOpen
-        category.add_pattern(GetTag.new(localname, {}))
+        category.add_pattern(GetTag.new(localname, {}, @environment))
       elsif thatIsOpen
-        category.add_that(GetTag.new(localname, {}))
+        category.add_that(GetTag.new(localname, {}, @environment))
       else
-        openLabels[-1].add(GetTag.new(localname, {}))
+        openLabels[-1].add(GetTag.new(localname, {}, @environment))
       end
     end
 ### end get
 
 ### set
     @parser.listen([/^set_*/, 'set']) do |uri, localname, qname, attributes|
-      setObj = SetTag.new(localname, attributes)
+      setObj = SetTag.new localname, attributes, @environment
       openLabels[-1].add(setObj)
       openLabels.push(setObj)
     end
@@ -236,7 +239,7 @@ class AimlParser
 
 ### person
     @parser.listen(%w{ person }) do |uri, localname, qname, attributes|
-      currentPerson = Person.new
+      currentPerson = Person.new @environment
       openLabels[-1].add(currentPerson)
       openLabels.push(currentPerson)
     end

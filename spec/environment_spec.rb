@@ -1,7 +1,7 @@
 
 describe ProgramR::Environment do
   before do
-    @env = ProgramR::Environment.new
+    @env = ProgramR::Environment.new ProgramR::History.instance
   end
 
   it "can set readonly tags file" do

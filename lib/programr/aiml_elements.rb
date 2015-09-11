@@ -1,12 +1,9 @@
 require 'programr/history'
-require 'programr/environment'
 require 'active_support/core_ext/string'
 
 module ProgramR
 
 class AimlTag
-  @@environment = Environment.new
-
   def inspect
     inspect_str = respond_to?(:to_inspect, true) ? to_inspect : execute
     "<#{self.class.name.demodulize.tableize.singularize} -> #{inspect_str}>"
@@ -14,14 +11,6 @@ class AimlTag
 
   def to_s
     respond_to?(:execute) ? execute : super
-  end
-
-  def self.environment
-    @@environment
-  end
-
-  def self.environment= env
-    @@environment = env
   end
 
   private
@@ -111,7 +100,8 @@ class Random < AimlTag
 end
 
 class Condition < AimlTag
-  def initialize someAttributes
+  def initialize someAttributes, environment
+    @environment = environment
     @conditions = {}
     pick_condition someAttributes do |name, value|
       @property = name
@@ -140,9 +130,9 @@ class Condition < AimlTag
   def condition_valid?
     if @property.nil?
       false
-    elsif @@environment.get(@property).nil?
+    elsif @environment.get(@property).nil?
       @currentCondition.nil?
-    elsif @@environment.get(@property) =~ /^#{@currentCondition}$/
+    elsif @environment.get(@property) =~ /^#{@currentCondition}$/
       true
     else
       false
@@ -210,9 +200,10 @@ class ListCondition < Condition
 end
 
 class ConditionItem < Condition
-  def initialize someAttributes, conditionContainer
+  def initialize someAttributes, conditionContainer, environment
     @conditionContainer = conditionContainer
     @conditions = {}
+    @environment = environment
     if @conditionContainer.is_a? ListCondition
       pick_condition someAttributes do |name, value|
         @property = name || @conditionContainer.property
@@ -235,13 +226,14 @@ class ConditionItem < Condition
 end
 
 class SetTag < AimlTag
-  def initialize aLocalname, attributes
+  def initialize aLocalname, attributes, environment
+    @environment = environment
+    @value = []
     if attributes['name'].nil?
       @localname = aLocalname.sub(/^set_/, '')
     else
       @localname = attributes['name']
     end
-    @value = []
   end
 
   def add aBody
@@ -253,7 +245,7 @@ class SetTag < AimlTag
   end
 
   def execute
-    @@environment.set(@localname, value)
+    @environment.set(@localname, value)
     to_response value
   end
 
@@ -304,7 +296,8 @@ class Star < AimlTag
 end
 
 class GetTag < AimlTag
-  def initialize aLocalname, someAttributes
+  def initialize aLocalname, someAttributes, environment
+    @environment = environment
     @localname = aLocalname.sub(/^get_/, '')
     if someAttributes.has_key?('index') && @localname == 'that'
       @localname = 'justbeforethat' if someAttributes['index'] == '2,1'
@@ -314,7 +307,7 @@ class GetTag < AimlTag
   end
 
   def execute
-    to_response @@environment.get(@attributed['name'] || @localname)
+    to_response @environment.get(@attributed['name'] || @localname)
   end
 
   private
@@ -388,9 +381,15 @@ class ReplaceTag < AimlTag
   def execute
     res = @sentence.map(&:to_s).join('').strip
     self.class::Map.each_pair do |matcher, fn|
-      res = res.gsub(matcher) { |match| fn.call $~ }
+      res = res.gsub(matcher) { |match| replace fn, $~ }
     end
     res
+  end
+
+  private
+
+  def replace fn, matches
+    fn.call matches
   end
 end
 
@@ -412,11 +411,22 @@ class Person < ReplaceTag
                          'she'    => 'i'}}
 
   Map = {
-    /\b(she|he|i|me|my|myself|mine)\b/i => -> (match) do
-      gender = @@environment.get('gender')
+    /\b(she|he|i|me|my|myself|mine)\b/i => -> (match, environment) do
+      gender = environment.get('gender')
       @@swap[gender][match[1].downcase]
     end
   }
+
+  def initialize environment
+    @environment = environment
+    super()
+  end
+
+  private
+
+  def replace fn, matches
+    fn.call matches, @environment
+  end
 end
 
 class Person2 < ReplaceTag
@@ -425,7 +435,7 @@ class Person2 < ReplaceTag
   Map = {
     /\b((with|to|of|for|give|gave|giving) (you|me)|you|i)\b/i => -> (match) do
       if match[3]
-        match[2].downcase + ' '+ @@swap[match[3].downcase]
+        match[2].downcase + ' ' + @@swap[match[3].downcase]
       elsif match[1].downcase == 'you'
         'i'
       elsif match[1].downcase == 'i'

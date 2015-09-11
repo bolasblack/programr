@@ -33,10 +33,10 @@ Bundler.setup :default
 
 require 'programr'
 
-# You can custom readonly tags
-ProgramR::Environment.new.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
-
 robot = ProgramR::Facade.new
+
+# You can custom readonly tags
+robot.environment.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
 
 # pass in a folder array or plain aiml content
 robot.learn ['spec/data']

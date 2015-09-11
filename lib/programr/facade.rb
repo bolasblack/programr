@@ -1,14 +1,18 @@
 require 'programr/graph_master'
+require 'programr/environment'
 require 'programr/aiml_parser'
 require 'programr/history'
 require 'programr/utils'
 
 module ProgramR
   class Facade
-    def initialize(cache = nil)
-      @graph_master = GraphMaster.new
-      @parser       = AimlParser.new(@graph_master)
+    attr_reader :environment
+
+    def initialize environment = Environment.new(History.instance)
+      @environment  = environment
       @history      = History.instance
+      @graph_master = GraphMaster.new
+      @parser       = AimlParser.new @graph_master, @environment
     end
 
     def reset

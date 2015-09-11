@@ -50,19 +50,20 @@
   </category>
 
   <category>
-    <pattern>gender test 2 *</pattern>
+    <pattern>test gender</pattern>
+    <template>
+      <gender>he told to her to take a hike</gender> but <gender>his ego was too much for her</gender>
+    </template>
+  </category>
+
+  <category>
+    <pattern>test gender wrap star *</pattern>
     <template><gender><star/></gender></template>
   </category>
 
   <category>
-    <pattern>test gender</pattern>
-    <template><gender>he told to her to take a hike</gender> but
-    <gender>his ego was too much for her</gender></template>
-  </category>
-
-  <category>
-    <pattern>* answers no</pattern>
-    <template><person><star/></person> answers no</template>
+    <pattern>test person wrap star *</pattern>
+    <template><person><star/></person></template>
   </category>
 
   <category>
