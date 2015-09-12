@@ -6,13 +6,13 @@ require 'programr/utils'
 
 module ProgramR
   class Facade
-    attr_reader :environment
+    attr_reader :environment, :history
 
-    def initialize environment = Environment.new(History.instance)
-      @environment  = environment
-      @history      = History.instance
+    def initialize environment_klass = Environment, history_klass = History
+      @history      = history_klass.new
+      @environment  = environment_klass.new @history
       @graph_master = GraphMaster.new
-      @parser       = AimlParser.new @graph_master, @environment
+      @parser       = AimlParser.new @graph_master, @environment, @history
     end
 
     def reset

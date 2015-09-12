@@ -7,8 +7,9 @@ require 'programr/aiml_elements'
 #
 module ProgramR
 class AimlParser
-  def initialize learner, environment
+  def initialize learner, environment, history
     @learner = learner
+    @history = history
     @environment = environment
   end
 
@@ -35,7 +36,7 @@ class AimlParser
     @parser.listen(:end_element, %w{ category }) { @learner.learn(category) }
 
     @parser.listen(%w{ topicstar thatstar star }) do |uri, localname, qname, attributes|
-      openLabels[-1].add(Star.new(localname, attributes))
+      openLabels[-1].add(Star.new(localname, attributes, @history))
     end
 
 ### condition
@@ -157,7 +158,7 @@ class AimlParser
 ### end template
 
     @parser.listen(%w{ input }) do |uri, localname, qname, attributes|
-      category.template.add(Input.new(attributes))
+      category.template.add(Input.new(attributes, @history))
     end
 
 ### think
@@ -201,7 +202,7 @@ class AimlParser
 
 ### srai
     @parser.listen(%w{ sr }) do |uri, localname, qname, attributes|
-      openLabels[-1].add(Srai.new(Star.new('star', {})))
+      openLabels[-1].add(Srai.new(Star.new('star', {}, @history)))
     end
 
     @parser.listen(%w{ srai }) do |uri, localname, qname, attributes|

@@ -1,4 +1,3 @@
-require 'programr/history'
 require 'active_support/core_ext/string'
 
 module ProgramR
@@ -257,7 +256,8 @@ class SetTag < AimlTag
 end
 
 class Input < AimlTag
-  def initialize(someAttributes)
+  def initialize someAttributes, history
+    @history = history
     @index = 1
     @index = someAttributes['index'].to_i if someAttributes.has_key?('index')
   end
@@ -269,12 +269,13 @@ class Input < AimlTag
   private
 
   def to_inspect
-    History.instance.get_stimula @index
+    @history.get_stimula @index
   end
 end
 
 class Star < AimlTag
-  def initialize aStarName, someAttributes
+  def initialize aStarName, someAttributes, history
+    @history = history
     @star = aStarName
     @index = 0
     @index = someAttributes['index'].to_i - 1 unless someAttributes.empty?
@@ -287,7 +288,7 @@ class Star < AimlTag
   private
 
   def get_star
-    History.instance.send("get_#{@star}", @index)
+    @history.send("get_#{@star}", @index)
   end
 
   def to_inspect

@@ -1,10 +1,7 @@
-require 'singleton.new'
-
 class FakeEnvironment
-  include Singleton
-
-  def initialize
+  def initialize history = nil
     @stage = {}
+    @history = history
   end
 
   def get key

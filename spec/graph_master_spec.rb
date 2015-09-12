@@ -19,8 +19,9 @@ describe ProgramR::GraphMaster do
 </category>
   AIML
 
+  let(:history) { ProgramR::History.new }
   let(:graph_master) { ProgramR::GraphMaster.new }
-  let(:environment) { ProgramR::Environment.new ProgramR::History.instance }
+  let(:environment) { ProgramR::Environment.new history }
 
   def response
     graph_master.get_reaction 'TEST', 'default', 'undef', []
@@ -29,7 +30,7 @@ describe ProgramR::GraphMaster do
   describe '#learn' do
     let(:parsed_category) do
       mock_graph_master = MockGraphMaster.new
-      parser = ProgramR::AimlParser.new mock_graph_master, environment
+      parser = ProgramR::AimlParser.new mock_graph_master, environment, history
       parser.parse aiml
       mock_graph_master.learned.first
     end
@@ -42,7 +43,7 @@ describe ProgramR::GraphMaster do
 
   describe '#reset' do
     before do
-      parser = ProgramR::AimlParser.new graph_master, environment
+      parser = ProgramR::AimlParser.new graph_master, environment, history
       parser.parse aiml
     end
 

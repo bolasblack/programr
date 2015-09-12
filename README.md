@@ -57,7 +57,6 @@ end
 
 ## Todo
 
-* Support custom `History` backend
 * Support other word segmentation algorithm
 * Support `robot.load_subs`
 * Support `<srai>` in `<person>`, `<person2>` and `<set>`
@@ -82,6 +81,7 @@ end
     * `<sraix>`
 * Documents
     * custom `Environment`
+    * custom `History`
     * custom `<person>`, `<person2>`, `<gender>` map
 
 ## Contributing

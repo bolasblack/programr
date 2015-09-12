@@ -1,9 +1,5 @@
-require 'singleton.new'
-
 module ProgramR
   class History
-    include Singleton
-
     attr_accessor :topic
 
     def initialize
