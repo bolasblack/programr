@@ -1,5 +1,3 @@
-require 'active_support/core_ext/string'
-
 module ProgramR
 
 class AimlTag

@@ -1,7 +1,5 @@
 # Listen block arguments document:
 #   http://ruby-doc.org/stdlib-2.0.0/libdoc/rexml/rdoc/REXML/SAX2Listener.html
-require 'rexml/parsers/sax2parser'
-require 'programr/aiml_elements'
 
 # gli accenti nel file di input vengono trasformati in &apos; !!!
 #

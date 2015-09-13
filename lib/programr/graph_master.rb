@@ -1,5 +1,3 @@
-require 'programr/aiml_elements'
-
 module ProgramR
   THAT  = '<that>'
   TOPIC = '<topic>'

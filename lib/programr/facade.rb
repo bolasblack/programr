@@ -1,9 +1,3 @@
-require 'programr/graph_master'
-require 'programr/environment'
-require 'programr/aiml_parser'
-require 'programr/history'
-require 'programr/utils'
-
 module ProgramR
   class Facade
     attr_reader :environment, :history

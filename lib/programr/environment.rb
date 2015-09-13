@@ -1,6 +1,3 @@
-require 'yaml'
-require 'programr/history'
-
 module ProgramR
 class Environment
   def initialize history
