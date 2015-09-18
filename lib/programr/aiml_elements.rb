@@ -22,7 +22,7 @@ class AimlTag
 end
 
 class Category < AimlTag
-  attr_accessor :template, :that, :topic
+  attr_accessor :template, :that, :topic, :language
 
   @@cardinality = 0
 
@@ -30,10 +30,11 @@ class Category < AimlTag
     @@cardinality
   end
 
-  def initialize
+  def initialize **opt
     @@cardinality += 1
-    @pattern = []
-    @that    = []
+    @pattern      = []
+    @that         = []
+    @language     = opt[:language]
   end
 
   def add_pattern anObj

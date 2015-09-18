@@ -57,7 +57,6 @@ end
 
 ## Todo
 
-* Support other word segmentation algorithm
 * Support `robot.load_subs`
 * Support `<srai>` in `<person>`, `<person2>` and `<set>`
 * Clean test
@@ -80,6 +79,7 @@ end
     * `<loop />`
     * `<sraix>`
 * Documents
+    * use other word segmentation algorithm
     * custom `Environment`
     * custom `History`
     * custom `<person>`, `<person2>`, `<gender>` map

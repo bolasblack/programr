@@ -12,12 +12,11 @@ class AimlParser
   end
 
   def parse aiml
-    @parser = REXML::Parsers::SAX2Parser.new(aiml)
     category             = nil
     openLabels           = []
     patternIsOpen        = false
     thatIsOpen           = false
-    currentSetLabel      = nil
+    currentLanguage      = nil
     currentCondition     = nil
     currentConditionItem = nil
     currentSrai          = nil
@@ -26,8 +25,10 @@ class AimlParser
     currentPerson2       = nil
     currentTopic         = nil
 
+    @parser = REXML::Parsers::SAX2Parser.new(aiml)
+
     @parser.listen(%w{ category }) do |uri, localname, qname, attributes|
-      category = Category.new
+      category = Category.new language: currentLanguage
       category.topic = currentTopic if currentTopic
     end
 
@@ -35,6 +36,17 @@ class AimlParser
 
     @parser.listen(%w{ topicstar thatstar star }) do |uri, localname, qname, attributes|
       openLabels[-1].add(Star.new(localname, attributes, @history))
+    end
+
+### meta
+    @parser.listen(:start_element, %w{ aiml }) do |uri, localname, qname, attributes|
+      if localname == 'meta' and attributes["name"] == 'language'
+        currentLanguage = attributes["content"].to_sym
+      end
+    end
+
+    @parser.listen(:end_element, %w{ aiml }) do
+      currentLanguage = nil
     end
 
 ### condition
@@ -134,7 +146,7 @@ class AimlParser
     @parser.listen(:end_element, %w{ pattern }){ patternIsOpen = false }
 #end pattern
 
-#### that
+### that
     @parser.listen(%w{ that }){ thatIsOpen = true }
     @parser.listen(:characters, %w{ that }){ |text| category.add_that(text) }
     @parser.listen(:end_element, %w{ that }){ thatIsOpen = false }

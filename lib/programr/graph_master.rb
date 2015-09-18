@@ -6,6 +6,7 @@ module ProgramR
     attr_reader :graph
 
     def initialize
+      @segmenter_map = {}
       reset
     end
 
@@ -14,14 +15,27 @@ module ProgramR
     end
 
     def learn category
-      path = category.patterns
+      segmenter = @segmenter_map[category.language]
+      if category.language.nil? or segmenter.nil?
+        path = category.patterns
+      else
+        path = segmenter.call category.patterns
+      end
       path += [THAT] + category.thats unless category.thats.empty?
       path += [TOPIC] + category.topics unless category.topics.empty?
       @graph.learn(category, path)
     end
 
     def get_reaction stimula, last_said, cur_topic, starGreedy
-      path = "#{stimula} #{THAT} #{last_said} #{TOPIC} #{cur_topic}".split(/\s+/)
+      if @segmenter_map.empty?
+        segmented_reaction = [stimula]
+      else
+        segmented_reaction = @segmenter_map.reduce [stimula] do |last_state, kvmap|
+          kvmap.last.call last_state
+        end
+      end
+
+      path = "#{segmented_reaction.join ' '} #{THAT} #{last_said} #{TOPIC} #{cur_topic}".split(/\s+/)
       template = @graph.get_template(path, starGreedy)
       template ? template.value : []
     end
@@ -32,6 +46,12 @@ module ProgramR
 
     def to_s
       @graph.inspectNode
+    end
+
+    def register_segmenter lang, &block
+      if block_given?
+        @segmenter_map[lang] = block
+      end
     end
   end
 

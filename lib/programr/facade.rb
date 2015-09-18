@@ -56,6 +56,10 @@ module ProgramR
       res
     end
 
+    def register_segmenter lang, &block
+      @graph_master.register_segmenter lang, &block
+    end
+
     def to_s
       @graph_master.to_s
     end
