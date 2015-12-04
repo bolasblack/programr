@@ -63,16 +63,6 @@ module ProgramR
       @children = {}
     end
 
-    def merge aCache
-      aCache.children.keys.each do |key|
-        if @children.has_key?(key)
-          @children[key].merge(aCache.children[key])
-	        next
-        end
-        @children[key] = aCache.children[key]
-      end
-    end
-
     def learn category, path
       branch = path.shift
       # Only the tail node has @template
