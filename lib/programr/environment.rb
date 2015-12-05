@@ -1,5 +1,8 @@
 module ProgramR
 class Environment
+  # @group Custom Environment required methods
+
+  # @param history the {History} instance which passed in {Facade#initialize}
   def initialize history
     @readonly_tags_file = "#{File.dirname(__FILE__)}/../../conf/readOnlyTags.yaml"
     @readonly_tags = YAML::load(File.open(@readonly_tags_file))
@@ -18,7 +21,7 @@ class Environment
     @readonly_tags[key] = value
   end
 
-  # not required method
+  # @endgroup
 
   def readonly_tags_file
     @readonly_tags_file

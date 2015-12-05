@@ -10,10 +10,6 @@ module ProgramR
       reset
     end
 
-    def merge aCache
-      @graph.merge(aCache.graph)
-    end
-
     def learn category
       segmenter = @segmenter_map[category.language]
       if category.language.nil? or segmenter.nil?

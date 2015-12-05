@@ -2,17 +2,20 @@ module ProgramR
   class Facade
     attr_reader :environment, :history
 
-    def initialize environment_klass = Environment, history_klass = History
-      @history      = history_klass.new
-      @environment  = environment_klass.new @history
+    # Create a new robot
+    #
+    # @param custom_environment the custom {Environment} class
+    # @param custom_history the custom {History} class
+    def initialize custom_environment = Environment, custom_history = History
+      @history      = custom_history.new
+      @environment  = custom_environment.new @history
       @graph_master = GraphMaster.new
       @parser       = AimlParser.new @graph_master, @environment, @history
     end
 
-    def reset
-      @graph_master.reset
-    end
-
+    # Learn knowledges
+    #
+    # @param content [String, Array<String>] folder array of aiml files or plain aiml content
     def learn content
       if content.is_a? Array
         read_aiml(content) { |f| @parser.parse f }
@@ -21,6 +24,11 @@ module ProgramR
       end
     end
 
+    # Talk with robot
+    #
+    # @!method get_reaction(stimula)
+    # @param stimula [String] the message speak to robot
+    # @return [String] the message robot said
     def get_reaction(stimula, firstStimula = true)
       starGreedy = []
       #TODO verify if case insensitive. Cross check with parser
@@ -42,8 +50,24 @@ module ProgramR
       res
     end
 
+    # Register segmenter for specified language
+    #
+    # @param lang [Symbol] the language tag segmenter for
+    # @param block [Block] the segmenter
+    # @note
+    #   Graphmaster decide which segmenters process aiml partten by read
+    #   `language` attribute of `Category` tag.
+    #
+    #   But it will not detect which language of user stimula, Graphmaster
+    #   will pass stimula to all segmenter, block should decide what to do
+    #   by it self.
     def register_segmenter lang, &block
       @graph_master.register_segmenter lang, &block
+    end
+
+    # Reset Graphmaster
+    def reset
+      @graph_master.reset
     end
 
     def to_s

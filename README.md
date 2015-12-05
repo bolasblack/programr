@@ -19,70 +19,13 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 You can find a set of ALICE AIML files hosted at http://code.google.com/p/aiml-en-us-foundation-alice
 
 ## Usage
 
-```ruby
-#programr_test.rb
-
-require 'bundler'
-Bundler.setup :default
-
-require 'programr'
-
-robot = ProgramR::Facade.new
-
-# You can custom readonly tags
-robot.environment.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
-
-# pass in a folder array or plain aiml content
-robot.learn ['spec/data']
-robot.learn <<-AIML
-  <category>
-    <pattern>#{pattern}</pattern>
-    <template>#{result}</template>
-  </category>
-AIML
-
-while true
-  print '>> '
-  s = STDIN.gets.chomp
-  reaction = robot.get_reaction(s)
-  STDOUT.puts "<< #{reaction}"
-end
-```
-
-## Todo
-
-* Support `robot.load_subs`
-* Support `<srai>` in `<person>`, `<person2>` and `<set>`
-* Clean test
-* Support [AIML 2.0 Draft](https://docs.google.com/document/d/1wNT25hJRyupcG51aO89UcQEiG-HkXRXusukADpFnDs4/pub) tags
-    * `<normalize>` and `<denormalize>`
-    * `<set>` in `<pattern>`
-    * `<map>`
-    * `<date format>`
-    * `<explode>`
-    * `<request>`
-    * `<response>`
-    * `<learn>`
-    * `<id />`
-    * `<vocabulary />`
-    * `<program />`
-    * `<interval>`
-    * `<set var>` and `<get var>`
-    * `<learnf>`
-    * `<eval>`
-    * `<loop />`
-    * `<sraix>`
-* Documents
-    * use other word segmentation algorithm
-    * custom `Environment`
-    * custom `History`
-    * custom `<person>`, `<person2>`, `<gender>` map
+See the [usage.rb](https://github.com/bolasblack/programr/blob/master/usage.rb)
 
 ## Contributing
 

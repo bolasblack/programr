@@ -12,12 +12,25 @@ module ProgramR
     end
 
 
+    # @param index [Numeric] get stimula, 0 is the nearest one
     def get_stimula index
       @inputs[index]
     end
 
+    # @param stimula [String]
     def update_stimula stimula
       @inputs.unshift stimula
+    end
+
+
+    # @param index [Numeric] get response, 0 is the nearest one
+    def get_response index
+      @responses[index]
+    end
+
+    # @param response [String]
+    def update_response response
+      @responses.unshift response
     end
 
 
@@ -42,25 +55,25 @@ module ProgramR
     end
 
 
+    # @param index [Numeric] get star, 0 is the nearest one
     def get_star index
       return 'undef' unless @star_greedy[index]
       @star_greedy[index].join(' ')
     end
 
+    # @param index [Numeric] get thatstar, 0 is the nearest one
     def get_thatstar index
       return 'undef' unless @that_greedy[index]
       @that_greedy[index].join(' ')
     end
 
+    # @param index [Numeric] get topicstar, 0 is the nearest one
     def get_topicstar index
       return 'undef' unless @topic_greedy[index]
       @topic_greedy[index].join(' ')
     end
 
-    def update_response response
-      @responses.unshift response
-    end
-
+    # @param star_greedy_array [Array<String>]
     def update_star_matches star_greedy_array
       @star_greedy = []
       @that_greedy = []
