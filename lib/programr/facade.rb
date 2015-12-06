@@ -9,8 +9,8 @@ module ProgramR
     def initialize custom_environment = Environment, custom_history = History
       @history      = custom_history.new
       @environment  = custom_environment.new @history
-      @graph_master = GraphMaster.new
-      @parser       = AimlParser.new @graph_master, @environment, @history
+      @graphmaster = Graphmaster.new
+      @parser       = AimlParser.new @graphmaster, @environment, @history
     end
 
     # Learn knowledges
@@ -33,7 +33,7 @@ module ProgramR
       starGreedy = []
       #TODO verify if case insensitive. Cross check with parser
       @history.update_stimula(stimula.upcase) if firstStimula
-      reaction = @graph_master.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
+      reaction = @graphmaster.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
       #puts reaction.inspect
       @history.update_star_matches starGreedy
       res = evaluate(reaction, starGreedy).flatten.reduce([]) do |memo, part|
@@ -62,16 +62,16 @@ module ProgramR
     #   will pass stimula to all segmenter, block should decide what to do
     #   by it self.
     def register_segmenter lang, &block
-      @graph_master.register_segmenter lang, &block
+      @graphmaster.register_segmenter lang, &block
     end
 
     # Reset Graphmaster
     def reset
-      @graph_master.reset
+      @graphmaster.reset
     end
 
     def to_s
-      @graph_master.to_s
+      @graphmaster.to_s
     end
 
     private

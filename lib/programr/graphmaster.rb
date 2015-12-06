@@ -2,7 +2,7 @@ module ProgramR
   THAT  = '<that>'
   TOPIC = '<topic>'
 
-  class GraphMaster
+  class Graphmaster
     attr_reader :graph
 
     def initialize
