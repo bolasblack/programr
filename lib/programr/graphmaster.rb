@@ -1,3 +1,5 @@
+# coding: utf-8
+
 module ProgramR
   THAT  = '<that>'
   TOPIC = '<topic>'
@@ -129,12 +131,14 @@ module ProgramR
       nil
     end
 
-    def inspect_node node_id = nil, ind = 0
-      str = ''
-      str += '| ' * (ind - 1) + "|_#{node_id}" unless ind == 0
-      str += ": [#{@template.inspect}]" if @template
-      str += "\n" unless ind == 0
-      @children.each_key{ |c| str += @children[c].inspect_node(c, ind + 1) }
+    def inspect_node branch = nil, indent_level = 0
+      line_head = [0, 1].include?(indent_level) ? '' : '┃ ' * (indent_level - 2) + '┣ '
+      line_content = (branch ? branch.to_s : '') + (@template ? ": [#{@template.inspect}]" : '')
+      line_tail = indent_level == 0 ? '' : "\n"
+      str = line_head + line_content + line_tail
+      @children.each_key do |child_branch|
+        str += @children[child_branch].inspect_node(child_branch, indent_level + 1)
+      end
       str
     end
 
