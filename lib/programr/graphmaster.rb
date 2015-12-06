@@ -41,7 +41,7 @@ module ProgramR
     end
 
     def to_s
-      @graph.inspectNode
+      @graph.inspect_node
     end
 
     def register_segmenter lang, &block
@@ -129,12 +129,12 @@ module ProgramR
       nil
     end
 
-    def inspectNode nodeId = nil, ind = 0
+    def inspect_node node_id = nil, ind = 0
       str = ''
-      str += '| ' * (ind - 1) + "|_#{nodeId}" unless ind == 0
+      str += '| ' * (ind - 1) + "|_#{node_id}" unless ind == 0
       str += ": [#{@template.inspect}]" if @template
       str += "\n" unless ind == 0
-      @children.each_key{ |c| str += @children[c].inspectNode(c, ind + 1) }
+      @children.each_key{ |c| str += @children[c].inspect_node(c, ind + 1) }
       str
     end
 

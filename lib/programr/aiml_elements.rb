@@ -140,7 +140,7 @@ class Condition < AimlTag
   private
 
   def to_inspect
-    "#{@property}: #{@currentCondition} => #{text}"
+    "if #{@property} == #{@currentCondition} then #{text}"
   end
 
   def pick_condition attributes
@@ -188,6 +188,10 @@ class ListCondition < Condition
 
   private
 
+  def to_inspect
+    @condition_items.map(&:to_inspect).join ' || '
+  end
+
   def default_item_result
     get_default_item = -> do
       @condition_items.each { |item| return item if item.default_item? }
@@ -219,6 +223,14 @@ class ConditionItem < Condition
       text
     else
       super
+    end
+  end
+
+  def to_inspect
+    if default_item?
+      text
+    else
+      "if #{@property} == #{@currentCondition} then #{text}"
     end
   end
 end
