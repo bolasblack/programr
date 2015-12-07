@@ -1,16 +1,5 @@
 # coding: utf-8
-
-class MockGraphmaster
-  attr_reader :learned
-
-  def initialize
-    @learned = []
-  end
-
-  def learn category
-    @learned << category
-  end
-end
+require File.join(File.dirname(__FILE__), './utils/fake_graphmaster')
 
 describe ProgramR::Graphmaster do
   aiml = <<-AIML
@@ -30,10 +19,10 @@ describe ProgramR::Graphmaster do
 
   describe '#learn' do
     let(:parsed_category) do
-      mock_graphmaster = MockGraphmaster.new
-      parser = ProgramR::AimlParser.new mock_graphmaster, environment, history
+      fake_graphmaster = FakeGraphmaster.new
+      parser = ProgramR::AimlParser.new fake_graphmaster, environment, history
       parser.parse aiml
-      mock_graphmaster.learned.first
+      fake_graphmaster.learned.first
     end
 
     it "learn category" do

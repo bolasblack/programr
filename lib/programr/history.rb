@@ -3,7 +3,7 @@ module ProgramR
     attr_accessor :topic
 
     def initialize
-      @topic       = 'default'
+      @topic       = 'undef'
       @inputs      = []
       @responses   = []
       @star_greedy  = []
@@ -13,6 +13,7 @@ module ProgramR
 
 
     # @param index [Numeric] get stimula, 0 is the nearest one
+    # @return [String, nil]
     def get_stimula index
       @inputs[index]
     end
@@ -24,6 +25,7 @@ module ProgramR
 
 
     # @param index [Numeric] get response, 0 is the nearest one
+    # @return [String, nil]
     def get_response index
       @responses[index]
     end
@@ -34,21 +36,25 @@ module ProgramR
     end
 
 
+    # @return [String] return last response or 'undef'
     def that
-      return 'undef' if @responses.empty?
+      return 'undef' unless @responses[0]
       @responses[0]
     end
 
+    # @return [String] return last second response or 'undef'
     def justbeforethat
       return 'undef' unless @responses[1]
       @responses[1]
     end
 
+    # @return [String] return last input or 'undef'
     def justthat
-      return 'undef' if @inputs.empty?
+      return 'undef' unless @inputs[0]
       @inputs[0]
     end
 
+    # @return [String] return last second input or 'undef'
     def beforethat
       return 'undef' unless @inputs[1]
       @inputs[1]
@@ -56,18 +62,21 @@ module ProgramR
 
 
     # @param index [Numeric] get star, 0 is the nearest one
+    # @return [String]
     def get_star index
       return 'undef' unless @star_greedy[index]
       @star_greedy[index].join(' ')
     end
 
     # @param index [Numeric] get thatstar, 0 is the nearest one
+    # @return [String]
     def get_thatstar index
       return 'undef' unless @that_greedy[index]
       @that_greedy[index].join(' ')
     end
 
     # @param index [Numeric] get topicstar, 0 is the nearest one
+    # @return [String]
     def get_topicstar index
       return 'undef' unless @topic_greedy[index]
       @topic_greedy[index].join(' ')
@@ -80,14 +89,14 @@ module ProgramR
       @topic_greedy = []
       current_greedy = @star_greedy
       star_greedy_array.each do |greedy|
-        if greedy == '<that>'
+        if greedy == GraphMark::THAT
           current_greedy = @that_greedy
-        elsif greedy == '<topic>'
+        elsif greedy == GraphMark::TOPIC
           current_greedy = @topic_greedy
-        elsif greedy == '<newMatch>'
+        elsif greedy == '<star>'
           current_greedy.push([])
         else
-          current_greedy[-1].push(greedy)
+          current_greedy.last.push(greedy)
         end
       end
     end

@@ -34,7 +34,6 @@ module ProgramR
       #TODO verify if case insensitive. Cross check with parser
       @history.update_stimula(stimula.upcase) if firstStimula
       reaction = @graphmaster.get_reaction stimula.upcase, @history.that, @history.topic, starGreedy
-      #puts reaction.inspect
       @history.update_star_matches starGreedy
       res = evaluate(reaction, starGreedy).flatten.reduce([]) do |memo, part|
         # clean case [" ", "part 1 ", " ", "part 2", " "]
@@ -80,7 +79,10 @@ module ProgramR
       thinkIsActive = false
       reaction.map do |token|
         if token.is_a? Srai
+          # TODO: execute srai in a sandbox
           token = get_reaction token.pattern, false
+          # restore context before Srai, otherwise next part will
+          # run in the error history
           @history.update_star_matches starGreedy
         end
         if token.is_a? Think
