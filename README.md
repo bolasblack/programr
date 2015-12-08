@@ -25,7 +25,7 @@ You can find a set of ALICE AIML files hosted at http://code.google.com/p/aiml-e
 
 ## Usage
 
-See the [usage.rb](https://github.com/bolasblack/programr/blob/master/usage.rb)
+See the [example.rb](https://github.com/bolasblack/programr/blob/master/example.rb)
 
 ## Contributing
 
