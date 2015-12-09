@@ -44,7 +44,7 @@ describe ProgramR::GraphNode do
         expect(matched).to eq ['<star>', 'b', 'c', 'd', 'e', 'f'] + opts[:matched_suffix]
       end
 
-      it 'support multipie star matcher' do
+      it 'support multiple star matcher' do
         node.learn parse_category(generate_aiml 'success'), 'a*cd*g'.split('').concat(opts[:path_suffix])
         matched = []
         expect(node.get_template(opts[:input_path], matched).value).to eq ['success']
@@ -101,7 +101,7 @@ describe ProgramR::GraphNode do
       )
     end
 
-    context 'with multipie star existed that' do
+    context 'with multiple star existed that' do
       include_examples(
         '#get_template specs',
         input_path: ['a', 'b', 'c', 'd', 'e', 'f', 'g', ProgramR::GraphMark::THAT, 'c', 'd', 'f', 'e', 'g', ProgramR::GraphMark::TOPIC, 'undef'],
@@ -128,7 +128,7 @@ describe ProgramR::GraphNode do
       )
     end
 
-    context 'with multipie star existed topic' do
+    context 'with multiple star existed topic' do
       include_examples(
         '#get_template specs',
         input_path: ['a', 'b', 'c', 'd', 'e', 'f', 'g', ProgramR::GraphMark::THAT, 'undef', ProgramR::GraphMark::TOPIC, 'c', 'd', 'f', 'e', 'g'],
@@ -155,7 +155,7 @@ describe ProgramR::GraphNode do
       )
     end
 
-    context 'with multipie star existed that and topic' do
+    context 'with multiple star existed that and topic' do
       include_examples(
         '#get_template specs',
         input_path: ['a', 'b', 'c', 'd', 'e', 'f', 'g', ProgramR::GraphMark::THAT, 'c', 'd', 'f', 'e', 'g', ProgramR::GraphMark::TOPIC, 'c', 'd', 'f', 'e', 'g'],
