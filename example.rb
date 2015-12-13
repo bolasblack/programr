@@ -6,7 +6,6 @@ require 'programr'
 
 robot = ProgramR::Facade.new
 
-# You can custom readonly tags
 robot.environment.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
 
 robot.learn ['spec/data']
