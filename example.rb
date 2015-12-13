@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'bundler'
 Bundler.setup :default
 
@@ -7,11 +8,6 @@ robot = ProgramR::Facade.new
 
 # You can custom readonly tags
 robot.environment.readonly_tags_file = 'spec/data/readOnlyTags.yaml'
-
-# Can also custom word segmentation algorithm
-robot.register_segmenter(:zh) do |segments|
-  segments.map{ |segment| segment.split '' }.flatten
-end
 
 robot.learn ['spec/data']
 robot.learn <<-AIML

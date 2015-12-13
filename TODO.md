@@ -19,8 +19,3 @@
     * `<eval>`
     * `<loop />`
     * `<sraix>`
-* Documents
-    * use other word segmentation algorithm
-    * custom `Environment`
-    * custom `History`
-    * custom `<person>`, `<person2>`, `<gender>` map
